@@ -291,14 +291,52 @@ class ProductDatabase(context: Context) :
             }
 
             nuevoId
-        } else {
-            val filas = writableDatabase.update(
+                } else {
+            val db = writableDatabase
+            val anterior = obtenerProducto(producto.id)
+
+            val filas = db.update(
                 "productos",
                 valores,
                 "id = ?",
                 arrayOf(producto.id.toString())
             )
-            if (filas > 0) producto.id else -1L
+
+            if (filas > 0) {
+                if (anterior != null &&
+                    anterior.cantidad != producto.cantidad
+                ) {
+                    val diferencia =
+                        producto.cantidad - anterior.cantidad
+
+                    val movimiento = ContentValues().apply {
+                        put(
+                            "tipo",
+                            if (diferencia > 0) "ENTRADA"
+                            else "SALIDA"
+                        )
+                        put("producto_id", producto.id)
+                        put("nombre_producto", producto.nombre)
+                        put("cantidad", kotlin.math.abs(diferencia))
+                        put(
+                            "importe",
+                            kotlin.math.abs(diferencia) * producto.coste
+                        )
+                        put("detalle", "Ajuste manual de existencias")
+                        put("fecha", System.currentTimeMillis())
+                    }
+
+                    db.insertOrThrow(
+                        "movimientos",
+                        null,
+                        movimiento
+                    )
+                }
+
+                producto.id
+            } else {
+                -1L
+            }
                 }
     }
 
