@@ -678,6 +678,8 @@ private val NOMBRE_BASE_DATOS = "custock.db"
             textSize = 16f
             setTextColor(azul)
         })
+                }
+
         contenido.addView(TextView(this).apply {
             text = "\nHistorial de pagos"
             textSize = 18f
