@@ -41,6 +41,9 @@ class MainActivity : Activity() {
     private val fondo = Color.rgb(245, 248, 253)
     private val CODIGO_CARPETA_INFORMES = 3001
     private val CLAVE_CARPETA_INFORMES = "carpeta_informes_uri"
+    private val CODIGO_CREAR_COPIA = 3002
+private val CODIGO_RESTAURAR_COPIA = 3003
+private val NOMBRE_BASE_DATOS = "custock.db"
 
     private fun icono(nombre: String) =
         iconos[nombre.trim().lowercase(Locale.ROOT)] ?: "📦"
