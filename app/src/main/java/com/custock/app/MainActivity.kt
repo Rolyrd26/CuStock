@@ -569,12 +569,20 @@ private val NOMBRE_BASE_DATOS = "custock.db"
         contenido.addView(cliente)
         val lista = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         val scroll = ScrollView(this).apply { addView(lista) }
+        
         val totalTexto = TextView(this).apply {
-            textSize = 22f
+            textSize = 23f
             typeface = Typeface.DEFAULT_BOLD
-            setTextColor(azul)
-            setPadding(0, dp(10), 0, dp(10))
+            setTextColor(if (temaOscuro) Color.WHITE else azul)
+            gravity = Gravity.CENTER
+            setPadding(dp(16), dp(14), dp(16), dp(14))
+            background = fondoRedondeado(
+                if (temaOscuro) Color.rgb(35, 65, 82)
+                else Color.rgb(225, 240, 255)
+            )
+            elevation = dp(2).toFloat()
         }
+
         lateinit var renderizarCarrito: () -> Unit
         lateinit var confirmar: (Boolean) -> Unit
 
