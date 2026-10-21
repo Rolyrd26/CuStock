@@ -183,7 +183,42 @@ class ProductDatabase(context: Context) :
             crearTablaMovimientos(db)
         }
         }
+    fun listarMovimientos(): List<Movimiento> {
+        val resultado = mutableListOf<Movimiento>()
 
+        val cursor = readableDatabase.rawQuery(
+            """
+            SELECT id, tipo, producto_id, nombre_producto,
+                   cantidad, importe, detalle, fecha
+            FROM movimientos
+            ORDER BY fecha DESC, id DESC
+            """.trimIndent(),
+            null
+        )
+
+        cursor.use {
+            while (it.moveToNext()) {
+                resultado.add(
+                    Movimiento(
+                        id = it.getLong(0),
+                        tipo = it.getString(1),
+                        productoId = if (it.isNull(2)) {
+                            null
+                        } else {
+                            it.getLong(2)
+                        },
+                        nombreProducto = it.getString(3),
+                        cantidad = it.getInt(4),
+                        importe = it.getDouble(5),
+                        detalle = it.getString(6),
+                        fecha = it.getLong(7)
+                    )
+                )
+            }
+        }
+
+        return resultado
+    }
     fun listar(
         categoria: String,
         busqueda: String = ""
