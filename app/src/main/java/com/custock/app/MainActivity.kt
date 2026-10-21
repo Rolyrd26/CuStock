@@ -149,8 +149,7 @@ private val NOMBRE_BASE_DATOS = "custock.db"
         })
         agregarBoton(contenido, "🛒  Nueva venta") { abrirVentas() }
         agregarBoton(contenido, "📒  Control de fiados") { abrirFiados() }
-        agregarBoton(contenido, "📊  Informes y ganancias") { abrirInformes() }
-        agregarBoton(contenido, "💾  Copias de seguridad") { abrirCopiasSeguridad() }
+        agregarBoton(contenido, "📊  Informes y ganancias") { abrirInformes() } 
         agregarBoton(contenido, "⚙️  Ajustes") { abrirAjustes() }
 
         val filaTitulo = LinearLayout(this).apply {
