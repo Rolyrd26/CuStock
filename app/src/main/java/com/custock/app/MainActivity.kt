@@ -562,10 +562,20 @@ private val NOMBRE_BASE_DATOS = "custock.db"
             setPadding(dp(16), dp(10), dp(16), dp(16))
         }
         agregarBoton(contenido, "← Volver al inicio") { construirPantalla() }
+        
         val cliente = EditText(this).apply {
             hint = "Nombre del cliente (obligatorio para fiar)"
             setSingleLine(true)
+            textSize = 16f
+            setTextColor(if (temaOscuro) Color.WHITE else Color.DKGRAY)
+            setHintTextColor(if (temaOscuro) Color.LTGRAY else Color.GRAY)
+            setPadding(dp(14), dp(12), dp(14), dp(12))
+            background = fondoRedondeado(
+                if (temaOscuro) Color.rgb(42, 49, 60)
+                else Color.WHITE
+            )
         }
+
         contenido.addView(cliente)
         val lista = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         val scroll = ScrollView(this).apply { addView(lista) }
