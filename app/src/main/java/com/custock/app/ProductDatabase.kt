@@ -542,7 +542,92 @@ class ProductDatabase(context: Context) :
 
         return pagos
     }
+fun ventasDelPeriodo(
+    desde: Long,
+    hasta: Long
+): List<VentaDocumento> {
+    val ventas = mutableListOf<VentaDocumento>()
 
+    val cursor = readableDatabase.rawQuery(
+        "SELECT id, cliente, fecha, total, es_fiado " +
+            "FROM ventas WHERE fecha >= ? AND fecha < ? " +
+            "ORDER BY fecha ASC, id ASC",
+        arrayOf(desde.toString(), hasta.toString())
+    )
+
+    cursor.use {
+        while (it.moveToNext()) {
+            val ventaId = it.getLong(0)
+            val lineas = mutableListOf<LineaDocumento>()
+
+            val detalle = readableDatabase.rawQuery(
+                "SELECT nombre_producto, cantidad, precio_unitario, subtotal " +
+                    "FROM detalle_ventas WHERE venta_id = ? ORDER BY id ASC",
+                arrayOf(ventaId.toString())
+            )
+
+            detalle.use { d ->
+                while (d.moveToNext()) {
+                    lineas.add(
+                        LineaDocumento(
+                            nombre = d.getString(0),
+                            cantidad = d.getInt(1),
+                            precioUnitario = d.getDouble(2),
+                            subtotal = d.getDouble(3)
+                        )
+                    )
+                }
+            }
+
+            ventas.add(
+                VentaDocumento(
+                    id = ventaId,
+                    cliente = it.getString(1),
+                    fecha = it.getLong(2),
+                    total = it.getDouble(3),
+                    esFiado = it.getInt(4) == 1,
+                    lineas = lineas
+                )
+            )
+        }
+    }
+
+    return ventas
+}
+
+fun pagosFiadosDelPeriodo(
+    desde: Long,
+    hasta: Long
+): List<PagoFiadoDocumento> {
+    val pagos = mutableListOf<PagoFiadoDocumento>()
+
+    val cursor = readableDatabase.rawQuery(
+        """
+        SELECT p.id, p.fiado_id, f.cliente, p.importe, p.fecha
+        FROM pagos_fiados p
+        INNER JOIN fiados f ON f.id = p.fiado_id
+        WHERE p.fecha >= ? AND p.fecha < ?
+        ORDER BY p.fecha ASC, p.id ASC
+        """.trimIndent(),
+        arrayOf(desde.toString(), hasta.toString())
+    )
+
+    cursor.use {
+        while (it.moveToNext()) {
+            pagos.add(
+                PagoFiadoDocumento(
+                    id = it.getLong(0),
+                    fiadoId = it.getLong(1),
+                    cliente = it.getString(2),
+                    importe = it.getDouble(3),
+                    fecha = it.getLong(4)
+                )
+            )
+        }
+    }
+
+    return pagos
+}
     fun totalVentas(desde: Long, hasta: Long): Double {
         val cursor = readableDatabase.rawQuery(
             "SELECT COALESCE(SUM(total), 0) FROM ventas " +
