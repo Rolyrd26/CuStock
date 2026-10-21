@@ -758,6 +758,178 @@ private fun seleccionarCopiaParaRestaurar() {
 
     startActivityForResult(intent, CODIGO_RESTAURAR_COPIA)
 }
+  
+private fun crearCopiaDesdeUri(uri: Uri) {
+    try {
+        val archivoBD = getDatabasePath(NOMBRE_BASE_DATOS)
+
+        if (!archivoBD.exists()) {
+            aviso("No se encontró la base de datos.")
+            return
+        }
+
+        val salida = contentResolver.openOutputStream(uri)
+        if (salida == null) {
+            aviso("No se pudo crear el archivo de copia.")
+            return
+        }
+
+        salida.use { flujo ->
+            ZipOutputStream(flujo).use { zip ->
+                zip.putNextEntry(ZipEntry(NOMBRE_BASE_DATOS))
+                FileInputStream(archivoBD).use { entrada ->
+                    entrada.copyTo(zip)
+                }
+                zip.closeEntry()
+
+                zip.putNextEntry(ZipEntry("categorias.json"))
+                val categoriasJson = prefs.getString("categorias", "[]") ?: "[]"
+                zip.write(categoriasJson.toByteArray(Charsets.UTF_8))
+                zip.closeEntry()
+            }
+        }
+
+        aviso("Copia de seguridad creada correctamente.")
+    } catch (e: Exception) {
+        aviso("Error al crear la copia: ${e.localizedMessage ?: "desconocido"}")
+    }
+}
+
+private fun restaurarCopiaDesdeUri(uri: Uri) {
+    val temporal = File(cacheDir, "custock_restauracion.tmp")
+    val categoriasTemporal = File(cacheDir, "categorias_restauracion.tmp")
+
+    try {
+        var encontroBD = false
+        var encontroCategorias = false
+
+        val entradaZip = contentResolver.openInputStream(uri)
+            ?: throw Exception("No se pudo abrir el archivo.")
+
+        entradaZip.use { entrada ->
+            ZipInputStream(entrada).use { zip ->
+                var elemento = zip.nextEntry
+
+                while (elemento != null) {
+                    when (elemento.name) {
+                        NOMBRE_BASE_DATOS -> {
+                            FileOutputStream(temporal).use { salida ->
+                                zip.copyTo(salida)
+                            }
+                            encontroBD = true
+                        }
+
+                        "categorias.json" -> {
+                            FileOutputStream(categoriasTemporal).use { salida ->
+                                zip.copyTo(salida)
+                            }
+                            encontroCategorias = true
+                        }
+                    }
+
+                    zip.closeEntry()
+                    elemento = zip.nextEntry
+                }
+            }
+        }
+
+        if (!encontroBD || !temporal.exists() || temporal.length() == 0L) {
+            throw Exception("La copia no contiene una base de datos válida.")
+        }
+
+        val comprobacion = android.database.sqlite.SQLiteDatabase.openDatabase(
+            temporal.absolutePath,
+            null,
+            android.database.sqlite.SQLiteDatabase.OPEN_READONLY
+        )
+
+        try {
+            val tablasNecesarias = listOf(
+                "productos",
+                "ventas",
+                "detalle_ventas",
+                "fiados",
+                "pagos_fiados"
+            )
+
+            val cursor = comprobacion.rawQuery(
+                "SELECT name FROM sqlite_master WHERE type='table'",
+                null
+            )
+
+            val tablas = mutableSetOf<String>()
+            cursor.use {
+                while (it.moveToNext()) {
+                    tablas.add(it.getString(0))
+                }
+            }
+
+            if (!tablasNecesarias.all { it in tablas }) {
+                throw Exception("La base de datos no corresponde a CuStock.")
+            }
+        } finally {
+            comprobacion.close()
+        }
+
+        var categoriasRestauradas = prefs.getString("categorias", "[]") ?: "[]"
+
+        if (encontroCategorias) {
+            categoriasRestauradas = categoriasTemporal.readText(Charsets.UTF_8)
+            org.json.JSONArray(categoriasRestauradas)
+        }
+
+        val archivoBD = getDatabasePath(NOMBRE_BASE_DATOS)
+        val respaldoAnterior = File(cacheDir, "custock_anterior.tmp")
+
+        baseDatos.close()
+
+        if (archivoBD.exists() && !archivoBD.copyTo(respaldoAnterior, true).exists()) {
+            throw Exception("No se pudo proteger la base de datos anterior.")
+        }
+
+        try {
+            File(archivoBD.absolutePath + "-wal").delete()
+            File(archivoBD.absolutePath + "-shm").delete()
+
+            if (!temporal.copyTo(archivoBD, true).exists()) {
+                throw Exception("No se pudo reemplazar la base de datos.")
+            }
+
+            if (encontroCategorias) {
+                prefs.edit()
+                    .putString("categorias", categoriasRestauradas)
+                    .apply()
+
+                categorias.clear()
+                val lista = org.json.JSONArray(categoriasRestauradas)
+                for (i in 0 until lista.length()) {
+                    categorias.add(lista.getString(i))
+                }
+            }
+
+            baseDatos = ProductDatabase(this)
+            baseDatos.readableDatabase
+
+            respaldoAnterior.delete()
+            aviso("Copia restaurada correctamente.")
+            construirPantalla()
+        } catch (e: Exception) {
+            archivoBD.delete()
+            if (respaldoAnterior.exists()) {
+                respaldoAnterior.copyTo(archivoBD, true)
+            }
+            baseDatos = ProductDatabase(this)
+            baseDatos.readableDatabase
+            throw e
+        }
+    } catch (e: Exception) {
+        aviso("Error al restaurar: ${e.localizedMessage ?: "archivo no válido"}")
+    } finally {
+        temporal.delete()
+        categoriasTemporal.delete()
+    }
+}
+  
     // SELECCIÓN PERSISTENTE DE CARPETA E INFORME WORD
 
     private fun seleccionarCarpetaInformes() {
