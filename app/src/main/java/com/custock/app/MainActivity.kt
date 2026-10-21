@@ -1,4 +1,4 @@
-package com.custock.app
+⁸package com.custock.app
 
 import android.content.Intent
 import android.net.Uri
@@ -237,11 +237,14 @@ private val NOMBRE_BASE_DATOS = "custock.db"
 
         contenido.addView(filaTitulo)
         contenido.addView(TextView(this).apply {
-            text = "Selecciona una categoría para gestionar sus productos."
-            textSize = 14f
-            setTextColor(Color.DKGRAY)
-            setPadding(0, dp(5), 0, dp(12))
-        })
+    text = "Selecciona una categoría para gestionar sus productos."
+    textSize = 14f
+    setTextColor(
+        if (temaOscuro) Color.LTGRAY
+        else Color.rgb(90, 100, 115)
+    )
+    setPadding(0, dp(5), 0, dp(12))
+})
 
         
         val grid = GridLayout(this).apply {
