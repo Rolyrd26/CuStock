@@ -942,27 +942,60 @@ private fun restaurarCopiaDesdeUri(uri: Uri) {
     }
 
     @Deprecated("Se conserva para compatibilidad con el selector de carpetas de Android.")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CODIGO_CARPETA_INFORMES && resultCode == RESULT_OK) {
+    
+
+@Deprecated("Se conserva para compatibilidad con los selectores de Android.")
+override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+
+    if (requestCode == CODIGO_CREAR_COPIA ||
+        requestCode == CODIGO_RESTAURAR_COPIA
+    ) {
+        if (resultCode == RESULT_OK) {
             val uri = data?.data
+
             if (uri == null) {
-                aviso("No se seleccionó ninguna carpeta.")
-                return
-            }
-            try {
-                val flags = (data.flags and
-                    (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION))
-                contentResolver.takePersistableUriPermission(uri, flags)
-                prefs.edit().putString(CLAVE_CARPETA_INFORMES, uri.toString()).apply()
-                aviso("Carpeta de informes guardada.")
-                abrirInformes()
-            } catch (e: Exception) {
-                aviso("No se pudo guardar el permiso de la carpeta: " +
-                    (e.localizedMessage ?: "error desconocido"))
+                aviso("No se seleccionó ningún archivo.")
+            } else if (requestCode == CODIGO_CREAR_COPIA) {
+                crearCopiaDesdeUri(uri)
+            } else {
+                restaurarCopiaDesdeUri(uri)
             }
         }
+        return
     }
+
+    if (requestCode == CODIGO_CARPETA_INFORMES &&
+        resultCode == RESULT_OK
+    ) {
+        val uri = data?.data
+
+        if (uri == null) {
+            aviso("No se seleccionó ninguna carpeta.")
+            return
+        }
+
+        try {
+            val flags = data.flags and
+                (Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+
+            contentResolver.takePersistableUriPermission(uri, flags)
+
+            prefs.edit()
+                .putString(CLAVE_CARPETA_INFORMES, uri.toString())
+                .apply()
+
+            aviso("Carpeta de informes guardada.")
+            abrirInformes()
+        } catch (e: Exception) {
+            aviso(
+                "No se pudo guardar el permiso de la carpeta: " +
+                    (e.localizedMessage ?: "error desconocido")
+            )
+        }
+    }
+}
 
     private fun carpetaInformesGuardada(): Uri? =
         prefs.getString(CLAVE_CARPETA_INFORMES, null)?.let {
