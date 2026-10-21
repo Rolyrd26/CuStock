@@ -678,7 +678,86 @@ private val NOMBRE_BASE_DATOS = "custock.db"
         }
         dialog.show()
     }
+// COPIAS DE SEGURIDAD
 
+private fun abrirCopiasSeguridad() {
+    val raiz = nuevaRaiz()
+    agregarCabecera(
+        raiz,
+        "Copias de seguridad",
+        "Protege los datos de tu negocio"
+    )
+
+    val contenido = LinearLayout(this).apply {
+        orientation = LinearLayout.VERTICAL
+        setPadding(dp(20), dp(15), dp(20), dp(20))
+    }
+
+    agregarBoton(contenido, "← Volver al inicio") {
+        construirPantalla()
+    }
+
+    contenido.addView(TextView(this).apply {
+        text = "Puedes guardar una copia de tus productos, " +
+            "existencias, ventas, fiados y pagos. " +
+            "Guarda el archivo ZIP en un lugar seguro."
+        textSize = 16f
+        setTextColor(Color.DKGRAY)
+        setPadding(0, dp(12), 0, dp(12))
+    })
+
+    agregarBoton(contenido, "📦 Crear copia de seguridad") {
+        crearCopiaSeguridad()
+    }
+
+    agregarBoton(contenido, "♻️ Restaurar una copia") {
+        AlertDialog.Builder(this)
+            .setTitle("Restaurar copia")
+            .setMessage(
+                "La restauración sustituirá los datos actuales " +
+                "por los incluidos en la copia seleccionada. " +
+                "Se recomienda crear primero una copia actual."
+            )
+            .setNegativeButton("Cancelar", null)
+            .setPositiveButton("Continuar") { _, _ ->
+                seleccionarCopiaParaRestaurar()
+            }
+            .show()
+    }
+
+    raiz.addView(
+        contenido,
+        LinearLayout.LayoutParams(-1, 0, 1f)
+    )
+
+    setContentView(raiz)
+}
+
+private fun crearCopiaSeguridad() {
+    val nombre = "CuStock_Copia_" +
+        SimpleDateFormat(
+            "yyyy-MM-dd_HHmm",
+            Locale.getDefault()
+        ).format(Date()) + ".zip"
+
+    val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+        addCategory(Intent.CATEGORY_OPENABLE)
+        type = "application/zip"
+        putExtra(Intent.EXTRA_TITLE, nombre)
+    }
+
+    startActivityForResult(intent, CODIGO_CREAR_COPIA)
+}
+
+private fun seleccionarCopiaParaRestaurar() {
+    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+        addCategory(Intent.CATEGORY_OPENABLE)
+        type = "application/zip"
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    }
+
+    startActivityForResult(intent, CODIGO_RESTAURAR_COPIA)
+}
     // SELECCIÓN PERSISTENTE DE CARPETA E INFORME WORD
 
     private fun seleccionarCarpetaInformes() {
