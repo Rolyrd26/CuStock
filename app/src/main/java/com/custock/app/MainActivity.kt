@@ -296,7 +296,9 @@ private val NOMBRE_BASE_DATOS = "custock.db"
                 val tarjeta = LinearLayout(this).apply {
                     orientation = LinearLayout.VERTICAL
                     setPadding(dp(12), dp(10), dp(12), dp(10))
-                    background = fondoRedondeado(Color.rgb(240, 245, 252))
+                    background = fondoRedondeado(
+    if (temaOscuro) Color.rgb(42, 49, 60) else Color.rgb(240, 245, 252)
+)
                 }
                 tarjeta.addView(TextView(this).apply {
                     text = producto.nombre
@@ -311,7 +313,7 @@ private val NOMBRE_BASE_DATOS = "custock.db"
                         "Referencia: ${producto.referencia.ifBlank { "—" }}\n" +
                         "Descripción: ${producto.descripcion.ifBlank { "—" }}"
                     textSize = 14f
-                    setTextColor(Color.DKGRAY)
+                    setTextColor(if (temaOscuro) Color.WHITE else Color.DKGRAY)
                 })
                 tarjeta.addView(Button(this).apply {
                     text = "Editar producto"
