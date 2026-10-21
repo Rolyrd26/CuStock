@@ -41,9 +41,13 @@ class MainActivity : Activity() {
         "bebidas" to "🥤", "electrodomésticos" to "🧊",
         "electrodomesticos" to "🧊", "accesorios" to "👜", "otros" to "📦"
     )
+    private var temaOscuro = false
 
-    private val azul = Color.rgb(24, 65, 120)
-    private val fondo = Color.rgb(245, 248, 253)
+    private val azul: Int
+        get() = if (temaOscuro) Color.rgb(35, 45, 60) else Color.rgb(24, 65, 120)
+
+    private val fondo: Int
+        get() = if (temaOscuro) Color.rgb(25, 30, 38) else Color.rgb(245, 248, 253)
     private val CODIGO_CARPETA_INFORMES = 3001
     private val CLAVE_CARPETA_INFORMES = "carpeta_informes_uri"
     private val CODIGO_CREAR_COPIA = 3002
