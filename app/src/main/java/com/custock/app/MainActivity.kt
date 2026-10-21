@@ -183,7 +183,11 @@ private val NOMBRE_BASE_DATOS = "custock.db"
 
         contenedor.addView(boton, parametros)
     }
-
+    private fun nuevaRaiz(): LinearLayout =
+        LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundColor(fondo)
+        }
 
     private fun construirPantalla() {
         val raiz = nuevaRaiz()
