@@ -795,11 +795,18 @@ class MainActivity : Activity() {
 
         try {
             val nombre = "CuStock_Informe_$fechaArchivo.docx"
-            val documentoUri = DocumentsContract.createDocument(
-                contentResolver, carpeta,
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                nombre
-            ) ?: throw IllegalStateException("Android no pudo crear el documento en esa carpeta.")
+            val carpetaDocumento = DocumentsContract.buildDocumentUriUsingTree(
+    carpeta,
+    DocumentsContract.getTreeDocumentId(carpeta)
+)
+
+val documentoUri = DocumentsContract.createDocument(
+    contentResolver, carpetaDocumento,
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    nombre
+) ?: throw IllegalStateException(
+    "Android no pudo crear el documento en esa carpeta."
+)
             val salida = contentResolver.openOutputStream(documentoUri, "w")
                 ?: throw IllegalStateException("No se pudo abrir el archivo para escribir.")
             salida.use { escribirDocx(it, parrafos) }
