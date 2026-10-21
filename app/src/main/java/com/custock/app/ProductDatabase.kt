@@ -45,6 +45,29 @@ data class PagoFiado(
     val importe: Double,
     val fecha: Long
 )
+data class LineaDocumento(
+    val nombre: String,
+    val cantidad: Int,
+    val precioUnitario: Double,
+    val subtotal: Double
+)
+
+data class VentaDocumento(
+    val id: Long,
+    val cliente: String,
+    val fecha: Long,
+    val total: Double,
+    val esFiado: Boolean,
+    val lineas: List<LineaDocumento>
+)
+
+data class PagoFiadoDocumento(
+    val id: Long,
+    val fiadoId: Long,
+    val cliente: String,
+    val importe: Double,
+    val fecha: Long
+)
 
 class ProductDatabase(context: Context) :
     SQLiteOpenHelper(context, "custock.db", null, 2) {
