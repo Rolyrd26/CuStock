@@ -957,10 +957,7 @@ private fun restaurarCopiaDesdeUri(uri: Uri) {
         }
         startActivityForResult(intent, CODIGO_CARPETA_INFORMES)
     }
-
-    @Deprecated("Se conserva para compatibilidad con el selector de carpetas de Android.")
     
-
 @Deprecated("Se conserva para compatibilidad con los selectores de Android.")
 override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     super.onActivityResult(requestCode, resultCode, data)
