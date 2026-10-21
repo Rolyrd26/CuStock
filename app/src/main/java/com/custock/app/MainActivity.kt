@@ -647,7 +647,31 @@ private val NOMBRE_BASE_DATOS = "custock.db"
             orientation = LinearLayout.VERTICAL
             setPadding(dp(18), dp(5), dp(18), dp(5))
         }
-        contenido.addView(TextView(this).apply {
+                contenido.addView(TextView(this).apply {
+            text = "\nProductos del fiado"
+            textSize = 18f
+            typeface = Typeface.DEFAULT_BOLD
+        })
+
+        val productosFiado = baseDatos.productosDelFiado(fiado.ventaId)
+
+        if (productosFiado.isEmpty()) {
+            contenido.addView(TextView(this).apply {
+                text = "No hay productos registrados en este fiado."
+                textSize = 14f
+            })
+        } else {
+            productosFiado.forEach { producto ->
+                contenido.addView(TextView(this).apply {
+                    text = "${producto.nombre}\n" +
+                        "Cantidad: ${producto.cantidad}\n" +
+                        "Precio unitario: ${dinero(producto.precioUnitario)} CUP\n" +
+                        "Subtotal: ${dinero(producto.subtotal)} CUP"
+                    textSize = 15f
+                    setPadding(0, dp(6), 0, dp(6))
+                })
+            }
+        }contenido.addView(TextView(this).apply {
             text = "Cliente: ${fiado.cliente}\nFiado #${fiado.id}\nFecha: ${fechaHora(fiado.fecha)}\n\n" +
                 "Importe original: ${dinero(fiado.total)} CUP\nTotal pagado: ${dinero(fiado.pagado)} CUP\n" +
                 "Saldo pendiente: ${dinero(fiado.saldo)} CUP"
