@@ -1,4 +1,4 @@
-⁸package com.custock.app
+package com.custock.app
 
 import android.content.Intent
 import android.net.Uri
