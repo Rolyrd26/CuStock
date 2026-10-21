@@ -70,7 +70,7 @@ data class PagoFiadoDocumento(
 )
 
 class ProductDatabase(context: Context) :
-    SQLiteOpenHelper(context, "custock.db", null, 2) {
+    SQLiteOpenHelper(context, "custock.db", null, 3)
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
@@ -146,8 +146,23 @@ class ProductDatabase(context: Context) :
             """.trimIndent()
         )
     }
-
-    override fun onUpgrade(
+    private fun crearTablaMovimientos(db: SQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS movimientos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                tipo TEXT NOT NULL,
+                producto_id INTEGER,
+                nombre_producto TEXT NOT NULL DEFAULT '',
+                cantidad INTEGER NOT NULL DEFAULT 0,
+                importe REAL NOT NULL DEFAULT 0,
+                detalle TEXT NOT NULL DEFAULT '',
+                fecha INTEGER NOT NULL
+            )
+            """.trimIndent()
+        )
+    }
+        override fun onUpgrade(
         db: SQLiteDatabase,
         oldVersion: Int,
         newVersion: Int
@@ -155,7 +170,10 @@ class ProductDatabase(context: Context) :
         if (oldVersion < 2) {
             crearTablasVentas(db)
         }
-    }
+        if (oldVersion < 3) {
+            crearTablaMovimientos(db)
+        }
+        }
 
     fun listar(
         categoria: String,
