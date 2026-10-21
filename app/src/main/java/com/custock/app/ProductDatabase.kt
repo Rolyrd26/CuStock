@@ -387,8 +387,8 @@ class ProductDatabase(context: Context) :
 
                 db.insertOrThrow(
                     "detalle_ventas", null, detalleValores
-                )
-                                val movimientoValores = ContentValues().apply {
+                )                
+                val movimientoValores = ContentValues().apply {
                     put("tipo", "VENTA")
                     put("producto_id", producto.id)
                     put("nombre_producto", producto.nombre)
