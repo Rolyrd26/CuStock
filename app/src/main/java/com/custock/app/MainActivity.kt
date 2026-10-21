@@ -634,22 +634,24 @@ private val NOMBRE_BASE_DATOS = "custock.db"
                 text = "Añade productos para comenzar la venta."
                 setPadding(0, dp(12), 0, dp(12))
             })
+            
             carrito.toList().forEach { linea ->
                 val producto = baseDatos.obtenerProducto(linea.productoId)
-                if (producto == null) carrito.remove(linea)
-                else {
+                if (producto == null) {
+                    carrito.remove(linea)
+                } else {
                     val subtotal = linea.cantidad * linea.precioUnitario
                     total += subtotal
-                    
-val tarjeta = LinearLayout(this).apply {
-    orientation = LinearLayout.VERTICAL
-    setPadding(dp(14), dp(12), dp(14), dp(12))
-    background = fondoRedondeado(
-        if (temaOscuro) Color.rgb(42, 49, 60)
-        else Color.WHITE
-    )
-    elevation = dp(2).toFloat()
-}
+
+                    val tarjeta = LinearLayout(this).apply {
+                        orientation = LinearLayout.VERTICAL
+                        setPadding(dp(14), dp(12), dp(14), dp(12))
+                        background = fondoRedondeado(
+                            if (temaOscuro) Color.rgb(42, 49, 60)
+                            else Color.WHITE
+                        )
+                        elevation = dp(2).toFloat()
+                    }
 
                     tarjeta.addView(TextView(this).apply {
                         text = producto.nombre
@@ -657,19 +659,28 @@ val tarjeta = LinearLayout(this).apply {
                         typeface = Typeface.DEFAULT_BOLD
                         setTextColor(azul)
                     })
+
                     tarjeta.addView(TextView(this).apply {
                         text = "${linea.cantidad} × ${dinero(linea.precioUnitario)} CUP\nSubtotal: ${dinero(subtotal)} CUP"
                         textSize = 14f
+                        setTextColor(if (temaOscuro) Color.WHITE else Color.DKGRAY)
+                        setPadding(0, dp(6), 0, dp(8))
                     })
-                    
+
                     tarjeta.addView(Button(this).apply {
                         text = "Quitar del carrito"
                         isAllCaps = false
                         textSize = 14f
                         typeface = Typeface.DEFAULT_BOLD
-                        setTextColor(if (temaOscuro) Color.rgb(255, 190, 190) else Color.rgb(190, 45, 55))
+                        setTextColor(
+                            if (temaOscuro) Color.rgb(255, 190, 190)
+                            else Color.rgb(190, 45, 55)
+                        )
                         background = GradientDrawable().apply {
-                            setColor(if (temaOscuro) Color.rgb(75, 43, 50) else Color.rgb(255, 238, 239))
+                            setColor(
+                                if (temaOscuro) Color.rgb(75, 43, 50)
+                                else Color.rgb(255, 238, 239)
+                            )
                             cornerRadius = dp(12).toFloat()
                         }
                         setPadding(dp(12), dp(8), dp(12), dp(8))
@@ -678,6 +689,53 @@ val tarjeta = LinearLayout(this).apply {
                             renderizarCarrito()
                         }
                     })
+
+                    lista.addView(tarjeta)
+                    lista.addView(TextView(this).apply {
+                        height = dp(8)
+                    })
+                }
+            }
+
+            totalTexto.text = "TOTAL: ${dinero(total)} CUP"
+        }
+
+        confirmar = { esFiado ->
+            if (carrito.isEmpty()) {
+                aviso("Añade al menos un producto.")
+            } else if (esFiado && cliente.text.toString().isBlank()) {
+                aviso("Escribe el nombre del cliente para registrar el fiado.")
+            } else {
+                AlertDialog.Builder(this)
+                    .setTitle(if (esFiado) "Confirmar fiado" else "Confirmar venta")
+                    .setMessage(
+                        "Total: ${dinero(carrito.sumOf { it.cantidad * it.precioUnitario })} CUP\n\n" +
+                            if (esFiado) "Se creará una deuda independiente para ${cliente.text}."
+                            else "Se descontarán las existencias del inventario."
+                    )
+                    .setNegativeButton("Cancelar", null)
+                    .setPositiveButton("Confirmar") { _, _ ->
+                        try {
+                            val resultado = baseDatos.registrarVenta(
+                                lineas = carrito.toList(),
+                                cliente = cliente.text.toString().trim(),
+                                esFiado = esFiado
+                            )
+                            aviso("Venta registrada. Total: ${dinero(resultado.total)} CUP")
+                            construirPantalla()
+                        } catch (e: Exception) {
+                            aviso(
+                                "No se pudo registrar la venta: " +
+                                    (e.localizedMessage ?: "error desconocido")
+                            )
+                        }
+                    }.show()
+            }
+        }
+
+        renderizarCarrito()
+    }
+
 
 
     private fun abrirFiados() {
