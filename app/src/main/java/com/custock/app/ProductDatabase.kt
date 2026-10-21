@@ -513,7 +513,30 @@ class ProductDatabase(context: Context) :
             db.endTransaction()
         }
     }
+    fun productosDelFiado(ventaId: Long): List<LineaDocumento> {
+        val lineas = mutableListOf<LineaDocumento>()
 
+        val cursor = readableDatabase.rawQuery(
+            "SELECT nombre_producto, cantidad, precio_unitario, subtotal " +
+                "FROM detalle_ventas WHERE venta_id = ? ORDER BY id ASC",
+            arrayOf(ventaId.toString())
+        )
+
+        cursor.use {
+            while (it.moveToNext()) {
+                lineas.add(
+                    LineaDocumento(
+                        nombre = it.getString(0),
+                        cantidad = it.getInt(1),
+                        precioUnitario = it.getDouble(2),
+                        subtotal = it.getDouble(3)
+                    )
+                )
+            }
+        }
+
+        return lineas
+    }
     fun historialPagos(fiadoId: Long): List<PagoFiado> {
         val pagos = mutableListOf<PagoFiado>()
 
