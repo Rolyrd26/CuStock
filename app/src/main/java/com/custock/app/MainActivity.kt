@@ -207,7 +207,8 @@ private val NOMBRE_BASE_DATOS = "custock.db"
         agregarBoton(contenido, "📒  Control de fiados") { abrirFiados() }
         agregarBoton(contenido, "📊  Informes y ganancias") { abrirInformes() } 
         agregarBoton(contenido, "⚙️  Ajustes") { abrirAjustes() }
-
+        agregarBoton(contenido, "📜  Historial de movimientos") { abrirHistorialMovimientos()
+}
         val filaTitulo = LinearLayout(this).apply {
             gravity = Gravity.CENTER_VERTICAL
             setPadding(0, dp(16), 0, dp(4))
@@ -1435,7 +1436,95 @@ val documentoUri = DocumentsContract.createDocument(
             aviso("Error al guardar el informe: " + (e.localizedMessage ?: "desconocido"))
         }
     }
+    private fun abrirHistorialMovimientos() {
+        val raiz = nuevaRaiz()
+        agregarCabecera(
+            raiz,
+            "Historial de movimientos",
+            "Entradas, salidas, ventas y pagos"
+        )
 
+        val desplazable = ScrollView(this)
+        val contenido = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(16), dp(16), dp(16), dp(24))
+        }
+
+        agregarBoton(contenido, "← Volver al inicio") {
+            construirPantalla()
+        }
+
+        val movimientos = baseDatos.listarMovimientos()
+
+        if (movimientos.isEmpty()) {
+            contenido.addView(TextView(this).apply {
+                text = "Todavía no hay movimientos registrados."
+                textSize = 16f
+                setTextColor(azul)
+                setPadding(0, dp(20), 0, dp(20))
+            })
+        } else {
+            movimientos.forEach { movimiento ->
+                val tipoVisible = when (movimiento.tipo) {
+                    "ENTRADA" -> "📥 ENTRADA"
+                    "SALIDA" -> "📤 SALIDA"
+                    "VENTA" -> "🛒 VENTA"
+                    "PAGO_FIADO" -> "💵 PAGO DE FIADO"
+                    else -> movimiento.tipo
+                }
+
+                val cantidadTexto =
+                    if (movimiento.cantidad > 0) {
+                        "\nCantidad: ${movimiento.cantidad}"
+                    } else {
+                        ""
+                    }
+
+                contenido.addView(TextView(this).apply {
+                    text = "$tipoVisible\n" +
+                        "${movimiento.nombreProducto}\n" +
+                        "Importe: ${dinero(movimiento.importe)} CUP" +
+                        cantidadTexto +
+                        "\n${movimiento.detalle}\n" +
+                        fechaHora(movimiento.fecha)
+
+                    textSize = 15f
+                    setTextColor(azul)
+                    setPadding(
+                        dp(12), dp(12), dp(12), dp(12)
+                    )
+                    background = fondoRedondeado(
+                        if (temaOscuro) {
+                            Color.rgb(38, 45, 56)
+                        } else {
+                            Color.WHITE
+                        }
+                    )
+                })
+
+                val espacio = Space(this)
+                contenido.addView(
+                    espacio,
+                    LinearLayout.LayoutParams(
+                        1,
+                        dp(8)
+                    )
+                )
+            }
+        }
+
+        desplazable.addView(contenido)
+        raiz.addView(
+            desplazable,
+            LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                1f
+            )
+        )
+
+        setContentView(raiz)
+    }
     private fun abrirInformes() {
         val calendario = Calendar.getInstance()
         calendario.set(Calendar.HOUR_OF_DAY, 0)
