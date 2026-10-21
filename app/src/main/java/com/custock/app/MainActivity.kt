@@ -651,7 +651,6 @@ val tarjeta = LinearLayout(this).apply {
     elevation = dp(2).toFloat()
 }
 
-                    }
                     tarjeta.addView(TextView(this).apply {
                         text = producto.nombre
                         textSize = 17f
