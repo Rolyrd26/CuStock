@@ -262,28 +262,58 @@ private val NOMBRE_BASE_DATOS = "custock.db"
         setContentView(raiz)
     }
 
-        private fun abrirAjustes() {
-        val opciones = arrayOf(
-            "💾 Copias de seguridad",
-            "🎨 Tema claro u oscuro"
+        
+    private fun abrirAjustes() {
+        val raiz = nuevaRaiz()
+        agregarCabecera(raiz, "Ajustes", "Personaliza CuStock")
+
+        val contenido = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(18), dp(20), dp(18), dp(20))
+        }
+
+        agregarBoton(contenido, "← Volver al inicio") {
+            construirPantalla()
+        }
+
+        contenido.addView(TextView(this).apply {
+            text = "PREFERENCIAS"
+            textSize = 14f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(azul)
+            setPadding(dp(4), dp(20), 0, dp(10))
+        })
+
+        agregarBoton(contenido, "💾  Copias de seguridad") {
+            abrirCopiasSeguridad()
+        }
+
+        agregarBoton(
+            contenido,
+            if (temaOscuro) "☀️  Activar tema claro"
+            else "🌙  Activar tema oscuro"
+        ) {
+            temaOscuro = !temaOscuro
+            prefs.edit().putBoolean("tema_oscuro", temaOscuro).apply()
+            abrirAjustes()
+            aviso(
+                if (temaOscuro) "Tema oscuro activado"
+                else "Tema claro activado"
+            )
+        }
+
+        val desplazable = ScrollView(this).apply {
+            addView(contenido)
+        }
+
+        raiz.addView(
+            desplazable,
+            LinearLayout.LayoutParams(-1, 0, 1f)
         )
 
-        AlertDialog.Builder(this)
-            .setTitle("⚙️ Ajustes de CuStock")
-            .setItems(opciones) { _, seleccion ->
-                when (seleccion) {
-                    0 -> abrirCopiasSeguridad()
-                                      1 -> {
-                        temaOscuro = !temaOscuro
-                        prefs.edit().putBoolean("tema_oscuro", temaOscuro).apply()
-                        construirPantalla()
-                        aviso(if (temaOscuro) "Tema oscuro activado" else "Tema claro activado")
-                    }
-                }
-            }
-            .setNegativeButton("Cerrar", null)
-            .show()
+        setContentView(raiz)
     }
+
         
     private fun nuevaCategoria() {
         val campo = EditText(this).apply {
