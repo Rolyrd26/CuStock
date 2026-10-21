@@ -78,7 +78,8 @@ private val NOMBRE_BASE_DATOS = "custock.db"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         baseDatos = ProductDatabase(this)
-
+        temaOscuro = prefs.getBoolean("tema_oscuro", false)
+        
         val guardadas = prefs.getString("categorias", null)
         if (guardadas == null) {
             categorias.addAll(predeterminadas)
@@ -230,8 +231,11 @@ private val NOMBRE_BASE_DATOS = "custock.db"
             .setItems(opciones) { _, seleccion ->
                 when (seleccion) {
                     0 -> abrirCopiasSeguridad()
-                    1 -> {
-                        aviso("Prepararemos la opción de tema claro y oscuro en el siguiente cambio.")
+                                      1 -> {
+                        temaOscuro = !temaOscuro
+                        prefs.edit().putBoolean("tema_oscuro", temaOscuro).apply()
+                        construirPantalla()
+                        aviso(if (temaOscuro) "Tema oscuro activado" else "Tema claro activado")
                     }
                 }
             }
