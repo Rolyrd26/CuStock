@@ -70,8 +70,7 @@ data class PagoFiadoDocumento(
 )
 
 class ProductDatabase(context: Context) :
-    SQLiteOpenHelper(context, "custock.db", null, 3)
-
+    SQLiteOpenHelper(context, "custock.db", null, 3) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
             """
@@ -88,7 +87,8 @@ class ProductDatabase(context: Context) :
             """.trimIndent()
         )
 
-        crearTablasVentas(db)
+                crearTablasVentas(db)
+        crearTablaMovimientos(db)
     }
 
     private fun crearTablasVentas(db: SQLiteDatabase) {
