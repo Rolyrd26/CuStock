@@ -190,10 +190,23 @@ private val NOMBRE_BASE_DATOS = "custock.db"
             typeface = Typeface.DEFAULT_BOLD
             setTextColor(azul)
         }, LinearLayout.LayoutParams(0, -2, 1f))
+        
         filaTitulo.addView(Button(this).apply {
-            text = "+ Añadir"
+            text = "＋ Añadir"
+            isAllCaps = false
+            textSize = 14f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(Color.WHITE)
+            background = GradientDrawable().apply {
+                setColor(azul)
+                cornerRadius = dp(12).toFloat()
+            }
+            setPadding(dp(12), dp(6), dp(12), dp(6))
+            minHeight = dp(44)
+            elevation = dp(2).toFloat()
             setOnClickListener { nuevaCategoria() }
         })
+
         contenido.addView(filaTitulo)
         contenido.addView(TextView(this).apply {
             text = "Selecciona una categoría para gestionar sus productos."
