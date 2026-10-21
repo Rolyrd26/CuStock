@@ -100,31 +100,55 @@ private val NOMBRE_BASE_DATOS = "custock.db"
         prefs.edit().putString("categorias", json.toString()).apply()
     }
 
-    private fun nuevaRaiz(): LinearLayout =
-        LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setBackgroundColor(fondo)
-        }
 
     private fun agregarCabecera(raiz: LinearLayout, titulo: String, subtitulo: String) {
         val cabecera = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp(22), dp(22), dp(22), dp(20))
-            setBackgroundColor(azul)
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(dp(24), dp(26), dp(24), dp(26))
+            background = GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
+                if (temaOscuro) {
+                    intArrayOf(
+                        Color.rgb(35, 45, 60),
+                        Color.rgb(24, 65, 120)
+                    )
+                } else {
+                    intArrayOf(
+                        Color.rgb(24, 65, 120),
+                        Color.rgb(45, 115, 190)
+                    )
+                }
+            ).apply {
+                cornerRadius = dp(20).toFloat()
+            }
+            elevation = dp(3).toFloat()
         }
+
         cabecera.addView(TextView(this).apply {
-            text = titulo
+            text = "📦  $titulo"
             textSize = 28f
             typeface = Typeface.DEFAULT_BOLD
             setTextColor(Color.WHITE)
         })
+
         cabecera.addView(TextView(this).apply {
             text = subtitulo
             textSize = 14f
-            setTextColor(Color.WHITE)
+            setTextColor(Color.rgb(230, 238, 250))
+            setPadding(0, dp(5), 0, 0)
         })
-        raiz.addView(cabecera)
+
+        val parametros = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            setMargins(dp(12), dp(12), dp(12), dp(4))
+        }
+
+        raiz.addView(cabecera, parametros)
     }
+
 
     
     private fun agregarBoton(contenedor: LinearLayout, texto: String, accion: () -> Unit) {
