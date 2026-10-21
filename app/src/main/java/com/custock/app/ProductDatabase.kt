@@ -68,7 +68,16 @@ data class PagoFiadoDocumento(
     val importe: Double,
     val fecha: Long
 )
-
+data class Movimiento(
+    val id: Long,
+    val tipo: String,
+    val productoId: Long?,
+    val nombreProducto: String,
+    val cantidad: Int,
+    val importe: Double,
+    val detalle: String,
+    val fecha: Long
+)
 class ProductDatabase(context: Context) :
     SQLiteOpenHelper(context, "custock.db", null, 3) {
     override fun onCreate(db: SQLiteDatabase) {
