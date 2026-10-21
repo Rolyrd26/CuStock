@@ -243,47 +243,72 @@ private val NOMBRE_BASE_DATOS = "custock.db"
             setPadding(0, dp(5), 0, dp(12))
         })
 
-        val grid = GridLayout(this).apply { columnCount = 2 }
+        
+        val grid = GridLayout(this).apply {
+            columnCount = 2
+            useDefaultMargins = false
+        }
+
         val colores = listOf(
-            0xFFDCEBFF.toInt(), 0xFFFFE7CC.toInt(), 0xFFFFDDE9.toInt(),
-            0xFFE7DEFF.toInt(), 0xFFD7F5EF.toInt(), 0xFFFFDFDF.toInt()
+            0xFFDCEBFF.toInt(),
+            0xFFFFE7CC.toInt(),
+            0xFFFFDDE9.toInt(),
+            0xFFE7DEFF.toInt(),
+            0xFFD7F5EF.toInt(),
+            0xFFFFDFDF.toInt()
         )
+
         categorias.forEachIndexed { indice, nombre ->
             val tarjeta = LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
                 gravity = Gravity.CENTER
-                setPadding(dp(8), dp(14), dp(8), dp(14))
-                                background = fondoRedondeado(
-                    if (temaOscuro) Color.rgb(42, 49, 60) else Color.WHITE
+                setPadding(dp(10), dp(16), dp(10), dp(16))
+                background = fondoRedondeado(
+                    if (temaOscuro) Color.rgb(42, 49, 60)
+                    else Color.WHITE
                 )
-                elevation = dp(2).toFloat()
+                elevation = dp(3).toFloat()
                 isClickable = true
                 isFocusable = true
                 setOnClickListener { abrirCategoria(nombre) }
             }
+
             tarjeta.addView(TextView(this).apply {
                 text = icono(nombre)
-                textSize = 38f
+                textSize = 36f
                 gravity = Gravity.CENTER
-                setPadding(dp(10), dp(7), dp(10), dp(7))
-                background = fondoRedondeado(colores[indice % colores.size])
+                setPadding(dp(12), dp(10), dp(12), dp(10))
+                background = fondoRedondeado(
+                    if (temaOscuro) Color.rgb(57, 69, 86)
+                    else colores[indice % colores.size]
+                )
             })
+
             tarjeta.addView(TextView(this).apply {
                 text = nombre
                 textSize = 16f
                 typeface = Typeface.DEFAULT_BOLD
                 gravity = Gravity.CENTER
-                                setTextColor(if (temaOscuro) Color.WHITE else Color.rgb(35, 48, 70))
-                setPadding(0, dp(10), 0, 0)
+                setTextColor(
+                    if (temaOscuro) Color.WHITE
+                    else Color.rgb(35, 48, 70)
+                )
+                maxLines = 2
+                setPadding(0, dp(12), 0, 0)
             })
+
             val params = GridLayout.LayoutParams().apply {
                 width = 0
-                height = dp(135)
-                columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-                setMargins(dp(5), dp(5), dp(5), dp(7))
+                height = dp(145)
+                columnSpec = GridLayout.spec(
+                    GridLayout.UNDEFINED, 1f
+                )
+                setMargins(dp(6), dp(6), dp(6), dp(6))
             }
+
             grid.addView(tarjeta, params)
         }
+
         contenido.addView(grid)
         desplazable.addView(contenido)
         raiz.addView(desplazable, LinearLayout.LayoutParams(-1, 0, 1f))
