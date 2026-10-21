@@ -637,17 +637,33 @@ private val NOMBRE_BASE_DATOS = "custock.db"
         actualizar()
     }
 
+
     private fun detalleFiado(fiadoId: Long) {
-        val fiado = baseDatos.listarFiados("", false).firstOrNull { it.id == fiadoId }
+        val fiado = baseDatos.listarFiados("", false)
+            .firstOrNull { it.id == fiadoId }
+
         if (fiado == null) {
             aviso("No se encontró este fiado.")
             return
         }
+
         val contenido = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp(18), dp(5), dp(18), dp(5))
+            setPadding(dp(18), dp(10), dp(18), dp(10))
         }
-                contenido.addView(TextView(this).apply {
+
+        contenido.addView(TextView(this).apply {
+            text = "Cliente: ${fiado.cliente}\n" +
+                "Fiado #${fiado.id}\n" +
+                "Fecha: ${fechaHora(fiado.fecha)}\n\n" +
+                "Importe original: ${dinero(fiado.total)} CUP\n" +
+                "Total pagado: ${dinero(fiado.pagado)} CUP\n" +
+                "Saldo pendiente: ${dinero(fiado.saldo)} CUP"
+            textSize = 16f
+            setTextColor(azul)
+        })
+
+        contenido.addView(TextView(this).apply {
             text = "\nProductos del fiado"
             textSize = 18f
             typeface = Typeface.DEFAULT_BOLD
@@ -670,46 +686,56 @@ private val NOMBRE_BASE_DATOS = "custock.db"
                     textSize = 15f
                     setPadding(0, dp(6), 0, dp(6))
                 })
-            
             }
-            contenido.addView(TextView(this).apply 
-        {
-            text = "Cliente: ${fiado.cliente}\nFiado #${fiado.id}\nFecha: ${fechaHora(fiado.fecha)}\n\n" +
-                "Importe original: ${dinero(fiado.total)} CUP\nTotal pagado: ${dinero(fiado.pagado)} CUP\n" +
-                "Saldo pendiente: ${dinero(fiado.saldo)} CUP"
-            textSize = 16f
-            setTextColor(azul)
-        })
-                
+        }
 
         contenido.addView(TextView(this).apply {
             text = "\nHistorial de pagos"
             textSize = 18f
             typeface = Typeface.DEFAULT_BOLD
         })
+
         val pagos = baseDatos.historialPagos(fiadoId)
-        if (pagos.isEmpty()) contenido.addView(TextView(this).apply {
-            text = "Todavía no hay pagos registrados."
-        }) else pagos.forEach { pago ->
+
+        if (pagos.isEmpty()) {
             contenido.addView(TextView(this).apply {
-                text = "${fechaHora(pago.fecha)} — ${dinero(pago.importe)} CUP"
-                textSize = 14f
-                setPadding(0, dp(4), 0, dp(4))
+                text = "Todavía no hay pagos registrados."
             })
+        } else {
+            pagos.forEach { pago ->
+                contenido.addView(TextView(this).apply {
+                    text = "${fechaHora(pago.fecha)} — " +
+                        "${dinero(pago.importe)} CUP"
+                    textSize = 14f
+                    setPadding(0, dp(4), 0, dp(4))
+                })
+            }
         }
-        val scroll = ScrollView(this).apply { addView(contenido) }
-        val dialog = AlertDialog.Builder(this).setTitle("Detalle del fiado").setView(scroll)
-            .setNegativeButton("Cerrar", null).setNeutralButton("Registrar pago", null).create()
+
+        val scroll = ScrollView(this).apply {
+            addView(contenido)
+        }
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Detalle del fiado")
+            .setView(scroll)
+            .setNegativeButton("Cerrar", null)
+            .setNeutralButton("Registrar pago", null)
+            .create()
+
         dialog.setOnShowListener {
             val boton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
             boton.isEnabled = fiado.saldo > 0.009
+
             boton.setOnClickListener {
                 dialog.dismiss()
                 pedirPago(fiadoId)
             }
         }
+
         dialog.show()
     }
+
 
     private fun pedirPago(fiadoId: Long) {
         val fiado = baseDatos.listarFiados("", false).firstOrNull { it.id == fiadoId } ?: return
