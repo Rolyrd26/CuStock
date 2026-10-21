@@ -759,41 +759,58 @@ private fun seleccionarCopiaParaRestaurar() {
     startActivityForResult(intent, CODIGO_RESTAURAR_COPIA)
 }
   
+
 private fun crearCopiaDesdeUri(uri: Uri) {
+    val archivoBD = getDatabasePath(NOMBRE_BASE_DATOS)
+
+    if (!archivoBD.exists()) {
+        aviso("No se encontró la base de datos.")
+        return
+    }
+
     try {
-        val archivoBD = getDatabasePath(NOMBRE_BASE_DATOS)
-
-        if (!archivoBD.exists()) {
-            aviso("No se encontró la base de datos.")
-            return
-        }
-
         val salida = contentResolver.openOutputStream(uri)
-        if (salida == null) {
-            aviso("No se pudo crear el archivo de copia.")
-            return
-        }
+            ?: throw Exception("No se pudo abrir el archivo de destino.")
 
         salida.use { flujo ->
-            ZipOutputStream(flujo).use { zip ->
-                zip.putNextEntry(ZipEntry(NOMBRE_BASE_DATOS))
-                FileInputStream(archivoBD).use { entrada ->
-                    entrada.copyTo(zip)
-                }
-                zip.closeEntry()
+            baseDatos.close()
 
-                zip.putNextEntry(ZipEntry("categorias.json"))
-                val categoriasJson = prefs.getString("categorias", "[]") ?: "[]"
-                zip.write(categoriasJson.toByteArray(Charsets.UTF_8))
-                zip.closeEntry()
+            try {
+                File(archivoBD.absolutePath + "-wal").delete()
+                File(archivoBD.absolutePath + "-shm").delete()
+
+                ZipOutputStream(flujo).use { zip ->
+                    zip.putNextEntry(ZipEntry(NOMBRE_BASE_DATOS))
+
+                    FileInputStream(archivoBD).use { entrada ->
+                        entrada.copyTo(zip)
+                    }
+
+                    zip.closeEntry()
+
+                    zip.putNextEntry(ZipEntry("categorias.json"))
+
+                    val categoriasJson =
+                        prefs.getString("categorias", "[]") ?: "[]"
+
+                    zip.write(categoriasJson.toByteArray(Charsets.UTF_8))
+                    zip.closeEntry()
+                }
+            } finally {
+                baseDatos = ProductDatabase(this)
+                baseDatos.readableDatabase
             }
         }
 
         aviso("Copia de seguridad creada correctamente.")
     } catch (e: Exception) {
-        aviso("Error al crear la copia: ${e.localizedMessage ?: "desconocido"}")
+        aviso(
+            "Error al crear la copia: " +
+                (e.localizedMessage ?: "desconocido")
+        )
     }
 }
+
 
 private fun restaurarCopiaDesdeUri(uri: Uri) {
     val temporal = File(cacheDir, "custock_restauracion.tmp")
