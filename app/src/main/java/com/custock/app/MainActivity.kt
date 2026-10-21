@@ -670,15 +670,17 @@ private val NOMBRE_BASE_DATOS = "custock.db"
                     textSize = 15f
                     setPadding(0, dp(6), 0, dp(6))
                 })
+            
             }
-        }contenido.addView(TextView(this).apply {
+            contenido.addView(TextView(this).apply 
+        {
             text = "Cliente: ${fiado.cliente}\nFiado #${fiado.id}\nFecha: ${fechaHora(fiado.fecha)}\n\n" +
                 "Importe original: ${dinero(fiado.total)} CUP\nTotal pagado: ${dinero(fiado.pagado)} CUP\n" +
                 "Saldo pendiente: ${dinero(fiado.saldo)} CUP"
             textSize = 16f
             setTextColor(azul)
         })
-                }
+                
 
         contenido.addView(TextView(this).apply {
             text = "\nHistorial de pagos"
