@@ -185,7 +185,9 @@ private val NOMBRE_BASE_DATOS = "custock.db"
                 orientation = LinearLayout.VERTICAL
                 gravity = Gravity.CENTER
                 setPadding(dp(8), dp(14), dp(8), dp(14))
-                background = fondoRedondeado(Color.WHITE)
+                                background = fondoRedondeado(
+                    if (temaOscuro) Color.rgb(42, 49, 60) else Color.WHITE
+                )
                 elevation = dp(2).toFloat()
                 isClickable = true
                 isFocusable = true
@@ -203,7 +205,7 @@ private val NOMBRE_BASE_DATOS = "custock.db"
                 textSize = 16f
                 typeface = Typeface.DEFAULT_BOLD
                 gravity = Gravity.CENTER
-                setTextColor(Color.rgb(35, 48, 70))
+                                setTextColor(if (temaOscuro) Color.WHITE else Color.rgb(35, 48, 70))
                 setPadding(0, dp(10), 0, 0)
             })
             val params = GridLayout.LayoutParams().apply {
