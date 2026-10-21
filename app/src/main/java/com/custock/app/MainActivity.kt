@@ -126,12 +126,40 @@ private val NOMBRE_BASE_DATOS = "custock.db"
         raiz.addView(cabecera)
     }
 
+    
     private fun agregarBoton(contenedor: LinearLayout, texto: String, accion: () -> Unit) {
-        contenedor.addView(Button(this).apply {
+        val boton = Button(this).apply {
             text = texto
+            isAllCaps = false
+            textSize = 16f
+            typeface = Typeface.DEFAULT_BOLD
+            gravity = Gravity.CENTER_VERTICAL
+            setTextColor(if (temaOscuro) Color.WHITE else azul)
+            background = GradientDrawable().apply {
+                setColor(if (temaOscuro) Color.rgb(42, 50, 63) else Color.WHITE)
+                cornerRadius = dp(14).toFloat()
+                setStroke(
+                    dp(1),
+                    if (temaOscuro) Color.rgb(75, 95, 120)
+                    else Color.rgb(210, 220, 235)
+                )
+            }
+            setPadding(dp(18), dp(14), dp(18), dp(14))
+            minHeight = dp(58)
+            elevation = dp(2).toFloat()
             setOnClickListener { accion() }
-        })
+        }
+
+        val parametros = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            bottomMargin = dp(10)
+        }
+
+        contenedor.addView(boton, parametros)
     }
+
 
     private fun construirPantalla() {
         val raiz = nuevaRaiz()
