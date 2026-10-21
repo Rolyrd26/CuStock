@@ -671,12 +671,17 @@ private val NOMBRE_BASE_DATOS = "custock.db"
                         elevation = dp(2).toFloat()
                     }
 
+                    
                     tarjeta.addView(TextView(this).apply {
                         text = producto.nombre
                         textSize = 17f
                         typeface = Typeface.DEFAULT_BOLD
-                        setTextColor(azul)
+                        setTextColor(
+                            if (temaOscuro) Color.rgb(140, 195, 255)
+                            else azul
+                        )
                     })
+
 
                     tarjeta.addView(TextView(this).apply {
                         text = "${linea.cantidad} × ${dinero(linea.precioUnitario)} CUP\nSubtotal: ${dinero(subtotal)} CUP"
