@@ -215,6 +215,26 @@ private val NOMBRE_BASE_DATOS = "custock.db"
         setContentView(raiz)
     }
 
+        private fun abrirAjustes() {
+        val opciones = arrayOf(
+            "💾 Copias de seguridad",
+            "🎨 Tema claro u oscuro"
+        )
+
+        AlertDialog.Builder(this)
+            .setTitle("⚙️ Ajustes de CuStock")
+            .setItems(opciones) { _, seleccion ->
+                when (seleccion) {
+                    0 -> abrirCopiasSeguridad()
+                    1 -> {
+                        aviso("Prepararemos la opción de tema claro y oscuro en el siguiente cambio.")
+                    }
+                }
+            }
+            .setNegativeButton("Cerrar", null)
+            .show()
+    }
+        
     private fun nuevaCategoria() {
         val campo = EditText(this).apply {
             hint = "Nombre de la categoría"
