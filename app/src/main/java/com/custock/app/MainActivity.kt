@@ -1282,6 +1282,94 @@ val documentoUri = DocumentsContract.createDocument(
             textSize = 14f
             setTextColor(Color.DKGRAY)
         })
+        
+        val ventasDetalle = baseDatos.ventasDelPeriodo(inicio, fin)
+        val pagosDetalle = baseDatos.pagosFiadosDelPeriodo(inicio, fin)
+
+        contenido.addView(TextView(this).apply {
+            text = "\nDETALLE DE VENTAS DE HOY"
+            textSize = 20f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(azul)
+            setPadding(0, dp(18), 0, dp(8))
+        })
+
+        if (ventasDetalle.isEmpty()) {
+            contenido.addView(TextView(this).apply {
+                text = "No hay ventas registradas hoy."
+                textSize = 15f
+            })
+        }
+
+        ventasDetalle.forEach { venta ->
+            contenido.addView(TextView(this).apply {
+                text = "Venta #${venta.id} — ${fechaHora(venta.fecha)}\n" +
+                    "Cliente: ${venta.cliente.ifBlank { "Sin nombre" }}\n" +
+                    "Tipo: ${if (venta.esFiado) "Fiada" else "Pagada"}\n" +
+                    "Total: ${dinero(venta.total)} CUP\n" +
+                    venta.lineas.joinToString("\n") { linea ->
+                        "• ${linea.nombre}: ${linea.cantidad} × " +
+                            "${dinero(linea.precioUnitario)} CUP = " +
+                            "${dinero(linea.subtotal)} CUP"
+                    }
+                textSize = 15f
+                setTextColor(if (temaOscuro) Color.WHITE else Color.DKGRAY)
+                setPadding(dp(10), dp(10), dp(10), dp(10))
+                background = fondoRedondeado(
+                    if (temaOscuro) Color.rgb(42, 49, 60)
+                    else Color.WHITE
+                )
+            })
+        }
+
+        contenido.addView(TextView(this).apply {
+            text = "\nPAGOS DE FIADOS RECIBIDOS HOY"
+            textSize = 20f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(azul)
+            setPadding(0, dp(18), 0, dp(8))
+        })
+
+        if (pagosDetalle.isEmpty()) {
+            contenido.addView(TextView(this).apply {
+                text = "No se registraron pagos de fiados hoy."
+                textSize = 15f
+            })
+        }
+
+        pagosDetalle.forEach { pago ->
+            val fiadoRelacionado = baseDatos.listarFiados("", false)
+                .firstOrNull { it.id == pago.fiadoId }
+
+            val productosAsociados = fiadoRelacionado?.let {
+                baseDatos.productosDelFiado(it.ventaId)
+            }.orEmpty()
+
+            val textoProductos = if (productosAsociados.isEmpty()) {
+                "No hay productos asociados disponibles."
+            } else {
+                "Productos asociados a este fiado:\n" +
+                    productosAsociados.joinToString("\n") { producto ->
+                        "• ${producto.nombre}: ${producto.cantidad} unidades — " +
+                            "${dinero(producto.precioUnitario)} CUP por unidad — " +
+                            "Subtotal: ${dinero(producto.subtotal)} CUP"
+                    }
+            }
+
+            contenido.addView(TextView(this).apply {
+                text = "${fechaHora(pago.fecha)} — ${pago.cliente}\n" +
+                    "Fiado #${pago.fiadoId}: ${dinero(pago.importe)} CUP\n" +
+                    textoProductos
+                textSize = 15f
+                setTextColor(if (temaOscuro) Color.WHITE else Color.DKGRAY)
+                setPadding(dp(10), dp(10), dp(10), dp(10))
+                background = fondoRedondeado(
+                    if (temaOscuro) Color.rgb(42, 49, 60)
+                    else Color.WHITE
+                )
+            })
+        }
+
         agregarBoton(contenido, "📁 Seleccionar carpeta de informes") { seleccionarCarpetaInformes() }
         agregarBoton(contenido, "📝 Guardar informe diario en Word (.docx)") { guardarInformeWord() }
         raiz.addView(contenido, LinearLayout.LayoutParams(-1, 0, 1f))
