@@ -587,7 +587,44 @@ class ProductDatabase(context: Context) :
             val pagoId = db.insertOrThrow(
                 "pagos_fiados", null, pagoValores
             )
+            val datosFiado = db.query(
+                "fiados",
+                arrayOf("cliente", "venta_id"),
+                "id = ?",
+                arrayOf(fiadoId.toString()),
+                null,
+                null,
+                null
+            )
 
+            val clientePago: String
+            val ventaPago: Long
+
+            datosFiado.use {
+                if (!it.moveToFirst()) {
+                    throw IllegalArgumentException("El fiado no existe.")
+                }
+                clientePago = it.getString(0)
+                ventaPago = it.getLong(1)
+            }
+
+            val movimientoPago = ContentValues().apply {
+                put("tipo", "PAGO_FIADO")
+                put("nombre_producto", clientePago)
+                put("cantidad", 0)
+                put("importe", importe)
+                put(
+                    "detalle",
+                    "Pago del fiado #$ventaPago"
+                )
+                put("fecha", System.currentTimeMillis())
+            }
+
+            db.insertOrThrow(
+                "movimientos",
+                null,
+                movimientoPago
+            )
             val nuevoPagado = (pagado + importe).coerceAtMost(total)
             val actualizacion = ContentValues().apply {
                 put("pagado", nuevoPagado)
