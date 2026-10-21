@@ -1180,10 +1180,46 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
         }
         parrafos.add("PAGOS DE FIADOS RECIBIDOS HOY" to true)
         if (pagos.isEmpty()) parrafos.add("No se registraron pagos de fiados hoy." to false)
+        
         pagos.forEach { pago ->
-            val hora = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(pago.fecha))
-            parrafos.add("$hora — ${pago.cliente} — Fiado #${pago.fiadoId}: ${dinero(pago.importe)} CUP" to false)
+            val hora = SimpleDateFormat(
+                "HH:mm",
+                Locale.getDefault()
+            ).format(Date(pago.fecha))
+
+            parrafos.add(
+                "$hora — ${pago.cliente} — " +
+                    "Fiado #${pago.fiadoId}: " +
+                    "${dinero(pago.importe)} CUP" to false
+            )
+
+            val fiadoRelacionado = baseDatos.listarFiados("", false)
+                .firstOrNull { it.id == pago.fiadoId }
+
+            if (fiadoRelacionado != null) {
+                val productos = baseDatos.productosDelFiado(
+                    fiadoRelacionado.ventaId
+                )
+
+                parrafos.add(
+                    "Productos asociados a este fiado:" to true
+                )
+
+                productos.forEach { producto ->
+                    parrafos.add(
+                        "  • ${producto.nombre}: " +
+                            "${producto.cantidad} unidades — " +
+                            "Precio unitario: " +
+                            "${dinero(producto.precioUnitario)} CUP — " +
+                            "Subtotal: ${dinero(producto.subtotal)} CUP"
+                        to false
+                    )
+                }
+            }
+
+            parrafos.add("" to false)
         }
+
         parrafos.add("" to false)
         parrafos.add("Nota: la ganancia es bruta y se calcula con los costes guardados en cada venta. No descuenta otros gastos del negocio." to false)
 
