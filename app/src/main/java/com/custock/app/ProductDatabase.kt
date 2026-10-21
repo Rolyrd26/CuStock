@@ -388,22 +388,6 @@ class ProductDatabase(context: Context) :
                 db.insertOrThrow(
                     "detalle_ventas", null, detalleValores
                 )
-            }
-
-            var fiadoId: Long? = null
-
-            if (esFiado) {
-                val fiadoValores = ContentValues().apply {
-                    put("venta_id", ventaId)
-                    put("cliente", cliente.trim())
-                    put("total", total)
-                    put("pagado", 0.0)
-                    put("fecha", fecha)
-                }
-
-                fiadoId = db.insertOrThrow(
-                    "fiados", null, fiadoValores
-                )
                                 val movimientoValores = ContentValues().apply {
                     put("tipo", "VENTA")
                     put("producto_id", producto.id)
@@ -421,6 +405,22 @@ class ProductDatabase(context: Context) :
                     "movimientos",
                     null,
                     movimientoValores
+                )
+            }
+
+            var fiadoId: Long? = null
+
+            if (esFiado) {
+                val fiadoValores = ContentValues().apply {
+                    put("venta_id", ventaId)
+                    put("cliente", cliente.trim())
+                    put("total", total)
+                    put("pagado", 0.0)
+                    put("fecha", fecha)
+                }
+
+                fiadoId = db.insertOrThrow(
+                    "fiados", null, fiadoValores
                 )
             }
 
