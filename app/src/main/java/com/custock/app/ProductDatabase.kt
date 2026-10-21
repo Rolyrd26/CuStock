@@ -404,6 +404,24 @@ class ProductDatabase(context: Context) :
                 fiadoId = db.insertOrThrow(
                     "fiados", null, fiadoValores
                 )
+                                val movimientoValores = ContentValues().apply {
+                    put("tipo", "VENTA")
+                    put("producto_id", producto.id)
+                    put("nombre_producto", producto.nombre)
+                    put("cantidad", linea.cantidad)
+                    put("importe", subtotal)
+                    put(
+                        "detalle",
+                        "Venta #$ventaId a ${cliente.trim().ifBlank { "Cliente general" }}"
+                    )
+                    put("fecha", fecha)
+                }
+
+                db.insertOrThrow(
+                    "movimientos",
+                    null,
+                    movimientoValores
+                )
             }
 
             db.setTransactionSuccessful()
