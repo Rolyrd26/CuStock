@@ -264,8 +264,33 @@ class ProductDatabase(context: Context) :
             put("descripcion", producto.descripcion)
         }
 
-        return if (producto.id == 0L) {
-            writableDatabase.insertOrThrow("productos", null, valores)
+                return if (producto.id == 0L) {
+            val db = writableDatabase
+            val nuevoId = db.insertOrThrow(
+                "productos",
+                null,
+                valores
+            )
+
+            if (producto.cantidad > 0) {
+                val movimiento = ContentValues().apply {
+                    put("tipo", "ENTRADA")
+                    put("producto_id", nuevoId)
+                    put("nombre_producto", producto.nombre)
+                    put("cantidad", producto.cantidad)
+                    put("importe", producto.cantidad * producto.coste)
+                    put("detalle", "Existencias iniciales")
+                    put("fecha", System.currentTimeMillis())
+                }
+
+                db.insertOrThrow(
+                    "movimientos",
+                    null,
+                    movimiento
+                )
+            }
+
+            nuevoId
         } else {
             val filas = writableDatabase.update(
                 "productos",
@@ -274,7 +299,7 @@ class ProductDatabase(context: Context) :
                 arrayOf(producto.id.toString())
             )
             if (filas > 0) producto.id else -1L
-        }
+                }
     }
 
     fun eliminar(id: Long) {
