@@ -640,10 +640,17 @@ private val NOMBRE_BASE_DATOS = "custock.db"
                 else {
                     val subtotal = linea.cantidad * linea.precioUnitario
                     total += subtotal
-                    val tarjeta = LinearLayout(this).apply {
-                        orientation = LinearLayout.VERTICAL
-                        setPadding(dp(10), dp(10), dp(10), dp(10))
-                        background = fondoRedondeado(Color.WHITE)
+                    
+val tarjeta = LinearLayout(this).apply {
+    orientation = LinearLayout.VERTICAL
+    setPadding(dp(14), dp(12), dp(14), dp(12))
+    background = fondoRedondeado(
+        if (temaOscuro) Color.rgb(42, 49, 60)
+        else Color.WHITE
+    )
+    elevation = dp(2).toFloat()
+}
+
                     }
                     tarjeta.addView(TextView(this).apply {
                         text = producto.nombre
