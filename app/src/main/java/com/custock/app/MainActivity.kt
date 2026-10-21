@@ -1175,7 +1175,12 @@ class MainActivity : Activity() {
 
         dialog.show()
     }
+private val CODIGO_CARPETA_INFORMES = 3001
 
+private fun seleccionarCarpetaInformes() {
+    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+    startActivityForResult(intent, CODIGO_CARPETA_INFORMES)
+}
     // INFORMES Y GANANCIAS DEL DÍA
 
     private fun abrirInformes() {
