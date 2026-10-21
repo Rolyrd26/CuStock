@@ -17,8 +17,37 @@ data class Producto(
     val descripcion: String = ""
 )
 
+data class LineaVenta(
+    val productoId: Long,
+    val cantidad: Int,
+    val precioUnitario: Double
+)
+
+data class ResultadoVenta(
+    val ventaId: Long,
+    val total: Double,
+    val fiadoId: Long? = null
+)
+
+data class Fiado(
+    val id: Long,
+    val ventaId: Long,
+    val cliente: String,
+    val total: Double,
+    val pagado: Double,
+    val saldo: Double,
+    val fecha: Long
+)
+
+data class PagoFiado(
+    val id: Long,
+    val fiadoId: Long,
+    val importe: Double,
+    val fecha: Long
+)
+
 class ProductDatabase(context: Context) :
-    SQLiteOpenHelper(context, "custock.db", null, 1) {
+    SQLiteOpenHelper(context, "custock.db", null, 2) {
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
@@ -35,6 +64,64 @@ class ProductDatabase(context: Context) :
             )
             """.trimIndent()
         )
+
+        crearTablasVentas(db)
+    }
+
+    private fun crearTablasVentas(db: SQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS ventas (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                cliente TEXT NOT NULL DEFAULT '',
+                fecha INTEGER NOT NULL,
+                total REAL NOT NULL,
+                es_fiado INTEGER NOT NULL DEFAULT 0
+            )
+            """.trimIndent()
+        )
+
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS detalle_ventas (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                venta_id INTEGER NOT NULL,
+                producto_id INTEGER NOT NULL,
+                nombre_producto TEXT NOT NULL,
+                cantidad INTEGER NOT NULL,
+                precio_unitario REAL NOT NULL,
+                coste_unitario REAL NOT NULL,
+                subtotal REAL NOT NULL,
+                FOREIGN KEY(venta_id) REFERENCES ventas(id)
+            )
+            """.trimIndent()
+        )
+
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS fiados (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                venta_id INTEGER NOT NULL UNIQUE,
+                cliente TEXT NOT NULL,
+                total REAL NOT NULL,
+                pagado REAL NOT NULL DEFAULT 0,
+                fecha INTEGER NOT NULL,
+                FOREIGN KEY(venta_id) REFERENCES ventas(id)
+            )
+            """.trimIndent()
+        )
+
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS pagos_fiados (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                fiado_id INTEGER NOT NULL,
+                importe REAL NOT NULL,
+                fecha INTEGER NOT NULL,
+                FOREIGN KEY(fiado_id) REFERENCES fiados(id)
+            )
+            """.trimIndent()
+        )
     }
 
     override fun onUpgrade(
@@ -42,7 +129,9 @@ class ProductDatabase(context: Context) :
         oldVersion: Int,
         newVersion: Int
     ) {
-        // Aquí añadiremos futuras migraciones sin perder datos.
+        if (oldVersion < 2) {
+            crearTablasVentas(db)
+        }
     }
 
     fun listar(
@@ -55,11 +144,7 @@ class ProductDatabase(context: Context) :
             "productos",
             null,
             "categoria = ? AND (nombre LIKE ? OR referencia LIKE ?)",
-            arrayOf(
-                categoria,
-                "%$busqueda%",
-                "%$busqueda%"
-            ),
+            arrayOf(categoria, "%$busqueda%", "%$busqueda%"),
             null,
             null,
             "nombre COLLATE NOCASE ASC"
@@ -69,30 +154,14 @@ class ProductDatabase(context: Context) :
             while (it.moveToNext()) {
                 productos.add(
                     Producto(
-                        id = it.getLong(
-                            it.getColumnIndexOrThrow("id")
-                        ),
-                        nombre = it.getString(
-                            it.getColumnIndexOrThrow("nombre")
-                        ),
-                        categoria = it.getString(
-                            it.getColumnIndexOrThrow("categoria")
-                        ),
-                        cantidad = it.getInt(
-                            it.getColumnIndexOrThrow("cantidad")
-                        ),
-                        coste = it.getDouble(
-                            it.getColumnIndexOrThrow("coste")
-                        ),
-                        venta = it.getDouble(
-                            it.getColumnIndexOrThrow("venta")
-                        ),
-                        referencia = it.getString(
-                            it.getColumnIndexOrThrow("referencia")
-                        ),
-                        descripcion = it.getString(
-                            it.getColumnIndexOrThrow("descripcion")
-                        )
+                        id = it.getLong(it.getColumnIndexOrThrow("id")),
+                        nombre = it.getString(it.getColumnIndexOrThrow("nombre")),
+                        categoria = it.getString(it.getColumnIndexOrThrow("categoria")),
+                        cantidad = it.getInt(it.getColumnIndexOrThrow("cantidad")),
+                        coste = it.getDouble(it.getColumnIndexOrThrow("coste")),
+                        venta = it.getDouble(it.getColumnIndexOrThrow("venta")),
+                        referencia = it.getString(it.getColumnIndexOrThrow("referencia")),
+                        descripcion = it.getString(it.getColumnIndexOrThrow("descripcion"))
                     )
                 )
             }
@@ -101,7 +170,49 @@ class ProductDatabase(context: Context) :
         return productos
     }
 
+    fun obtenerProducto(id: Long): Producto? {
+        val cursor = readableDatabase.query(
+            "productos",
+            null,
+            "id = ?",
+            arrayOf(id.toString()),
+            null,
+            null,
+            null
+        )
+
+        cursor.use {
+            if (!it.moveToFirst()) return null
+
+            return Producto(
+                id = it.getLong(it.getColumnIndexOrThrow("id")),
+                nombre = it.getString(it.getColumnIndexOrThrow("nombre")),
+                categoria = it.getString(it.getColumnIndexOrThrow("categoria")),
+                cantidad = it.getInt(it.getColumnIndexOrThrow("cantidad")),
+                coste = it.getDouble(it.getColumnIndexOrThrow("coste")),
+                venta = it.getDouble(it.getColumnIndexOrThrow("venta")),
+                referencia = it.getString(it.getColumnIndexOrThrow("referencia")),
+                descripcion = it.getString(it.getColumnIndexOrThrow("descripcion"))
+            )
+        }
+    }
+
     fun guardar(producto: Producto): Long {
+        require(producto.nombre.isNotBlank()) {
+            "El nombre del producto es obligatorio."
+        }
+        require(producto.cantidad >= 0) {
+            "Las existencias no pueden ser negativas."
+        }
+        require(
+            producto.coste.isFinite() &&
+                producto.venta.isFinite() &&
+                producto.coste >= 0 &&
+                producto.venta >= 0
+        ) {
+            "Los precios deben ser válidos y no negativos."
+        }
+
         val valores = ContentValues().apply {
             put("nombre", producto.nombre)
             put("categoria", producto.categoria)
@@ -113,11 +224,7 @@ class ProductDatabase(context: Context) :
         }
 
         return if (producto.id == 0L) {
-            writableDatabase.insertOrThrow(
-                "productos",
-                null,
-                valores
-            )
+            writableDatabase.insertOrThrow("productos", null, valores)
         } else {
             val filas = writableDatabase.update(
                 "productos",
@@ -125,7 +232,6 @@ class ProductDatabase(context: Context) :
                 "id = ?",
                 arrayOf(producto.id.toString())
             )
-
             if (filas > 0) producto.id else -1L
         }
     }
@@ -137,5 +243,311 @@ class ProductDatabase(context: Context) :
             arrayOf(id.toString())
         )
     }
-}
 
+    /**
+     * Registra una venta en una transacción.
+     * Descuenta existencias y, si corresponde,
+     * crea una deuda independiente.
+     */
+    fun registrarVenta(
+        lineas: List<LineaVenta>,
+        cliente: String = "",
+        esFiado: Boolean = false
+    ): ResultadoVenta {
+        require(lineas.isNotEmpty()) {
+            "Añade al menos un producto."
+        }
+        require(lineas.all {
+            it.productoId > 0 &&
+                it.cantidad > 0 &&
+                it.precioUnitario.isFinite() &&
+                it.precioUnitario >= 0
+        }) {
+            "Revisa las cantidades y los precios."
+        }
+        require(!esFiado || cliente.isNotBlank()) {
+            "Escribe el nombre del cliente para el fiado."
+        }
+
+        val db = writableDatabase
+        db.beginTransaction()
+
+        try {
+            var total = 0.0
+            val detalles =
+                mutableListOf<Triple<Producto, LineaVenta, Double>>()
+
+            for (linea in lineas) {
+                val producto = obtenerProducto(linea.productoId)
+                    ?: throw IllegalArgumentException(
+                        "Un producto ya no existe."
+                    )
+
+                require(producto.cantidad >= linea.cantidad) {
+                    "No hay existencias suficientes de ${producto.nombre}."
+                }
+
+                val subtotal = linea.cantidad * linea.precioUnitario
+                require(subtotal.isFinite()) {
+                    "El importe de la venta no es válido."
+                }
+
+                total += subtotal
+                detalles.add(Triple(producto, linea, subtotal))
+            }
+
+            require(total.isFinite()) {
+                "El total de la venta no es válido."
+            }
+
+            val fecha = System.currentTimeMillis()
+            val ventaValores = ContentValues().apply {
+                put("cliente", cliente.trim())
+                put("fecha", fecha)
+                put("total", total)
+                put("es_fiado", if (esFiado) 1 else 0)
+            }
+
+            val ventaId = db.insertOrThrow(
+                "ventas", null, ventaValores
+            )
+
+            for ((producto, linea, subtotal) in detalles) {
+                val actualizadas = db.update(
+                    "productos",
+                    ContentValues().apply {
+                        put(
+                            "cantidad",
+                            producto.cantidad - linea.cantidad
+                        )
+                    },
+                    "id = ? AND cantidad >= ?",
+                    arrayOf(
+                        linea.productoId.toString(),
+                        linea.cantidad.toString()
+                    )
+                )
+
+                if (actualizadas != 1) {
+                    throw IllegalStateException(
+                        "No se pudieron actualizar las existencias."
+                    )
+                }
+
+                val detalleValores = ContentValues().apply {
+                    put("venta_id", ventaId)
+                    put("producto_id", producto.id)
+                    put("nombre_producto", producto.nombre)
+                    put("cantidad", linea.cantidad)
+                    put("precio_unitario", linea.precioUnitario)
+                    put("coste_unitario", producto.coste)
+                    put("subtotal", subtotal)
+                }
+
+                db.insertOrThrow(
+                    "detalle_ventas", null, detalleValores
+                )
+            }
+
+            var fiadoId: Long? = null
+
+            if (esFiado) {
+                val fiadoValores = ContentValues().apply {
+                    put("venta_id", ventaId)
+                    put("cliente", cliente.trim())
+                    put("total", total)
+                    put("pagado", 0.0)
+                    put("fecha", fecha)
+                }
+
+                fiadoId = db.insertOrThrow(
+                    "fiados", null, fiadoValores
+                )
+            }
+
+            db.setTransactionSuccessful()
+            return ResultadoVenta(ventaId, total, fiadoId)
+        } finally {
+            db.endTransaction()
+        }
+    }
+
+    fun listarFiados(
+        busquedaCliente: String = "",
+        soloPendientes: Boolean = false
+    ): List<Fiado> {
+        val resultado = mutableListOf<Fiado>()
+
+        val condicion = buildString {
+            append("cliente LIKE ?")
+            if (soloPendientes) {
+                append(" AND (total - pagado) > 0.009")
+            }
+        }
+
+        val cursor = readableDatabase.query(
+            "fiados",
+            arrayOf(
+                "id", "venta_id", "cliente", "total",
+                "pagado", "(total - pagado) AS saldo", "fecha"
+            ),
+            condicion,
+            arrayOf("%$busquedaCliente%"),
+            null,
+            null,
+            "fecha DESC, id DESC"
+        )
+
+        cursor.use {
+            while (it.moveToNext()) {
+                resultado.add(
+                    Fiado(
+                        id = it.getLong(0),
+                        ventaId = it.getLong(1),
+                        cliente = it.getString(2),
+                        total = it.getDouble(3),
+                        pagado = it.getDouble(4),
+                        saldo = it.getDouble(5),
+                        fecha = it.getLong(6)
+                    )
+                )
+            }
+        }
+
+        return resultado
+    }
+
+    fun registrarPago(fiadoId: Long, importe: Double): Long {
+        require(importe.isFinite() && importe > 0) {
+            "El pago debe ser mayor que cero."
+        }
+
+        val db = writableDatabase
+        db.beginTransaction()
+
+        try {
+            val cursor = db.query(
+                "fiados",
+                arrayOf("total", "pagado"),
+                "id = ?",
+                arrayOf(fiadoId.toString()),
+                null,
+                null,
+                null
+            )
+
+            val total: Double
+            val pagado: Double
+
+            cursor.use {
+                if (!it.moveToFirst()) {
+                    throw IllegalArgumentException("El fiado no existe.")
+                }
+                total = it.getDouble(0)
+                pagado = it.getDouble(1)
+            }
+
+            val saldo = total - pagado
+
+            require(saldo > 0.009) {
+                "Este fiado ya está pagado."
+            }
+            require(importe <= saldo + 0.001) {
+                "El pago supera el saldo pendiente."
+            }
+
+            val pagoValores = ContentValues().apply {
+                put("fiado_id", fiadoId)
+                put("importe", importe)
+                put("fecha", System.currentTimeMillis())
+            }
+
+            val pagoId = db.insertOrThrow(
+                "pagos_fiados", null, pagoValores
+            )
+
+            val nuevoPagado = (pagado + importe).coerceAtMost(total)
+            val actualizacion = ContentValues().apply {
+                put("pagado", nuevoPagado)
+            }
+
+            val filas = db.update(
+                "fiados",
+                actualizacion,
+                "id = ?",
+                arrayOf(fiadoId.toString())
+            )
+
+            if (filas != 1) {
+                throw IllegalStateException(
+                    "No se pudo actualizar el saldo."
+                )
+            }
+
+            db.setTransactionSuccessful()
+            return pagoId
+        } finally {
+            db.endTransaction()
+        }
+    }
+
+    fun historialPagos(fiadoId: Long): List<PagoFiado> {
+        val pagos = mutableListOf<PagoFiado>()
+
+        val cursor = readableDatabase.query(
+            "pagos_fiados",
+            arrayOf("id", "fiado_id", "importe", "fecha"),
+            "fiado_id = ?",
+            arrayOf(fiadoId.toString()),
+            null,
+            null,
+            "fecha DESC, id DESC"
+        )
+
+        cursor.use {
+            while (it.moveToNext()) {
+                pagos.add(
+                    PagoFiado(
+                        id = it.getLong(0),
+                        fiadoId = it.getLong(1),
+                        importe = it.getDouble(2),
+                        fecha = it.getLong(3)
+                    )
+                )
+            }
+        }
+
+        return pagos
+    }
+
+    fun totalVentas(desde: Long, hasta: Long): Double {
+        val cursor = readableDatabase.rawQuery(
+            "SELECT COALESCE(SUM(total), 0) FROM ventas " +
+                "WHERE fecha >= ? AND fecha < ?",
+            arrayOf(desde.toString(), hasta.toString())
+        )
+
+        cursor.use {
+            return if (it.moveToFirst()) it.getDouble(0) else 0.0
+        }
+    }
+
+    fun gananciaRegistrada(desde: Long, hasta: Long): Double {
+        val cursor = readableDatabase.rawQuery(
+            """
+            SELECT COALESCE(SUM(
+                dv.cantidad *
+                (dv.precio_unitario - dv.coste_unitario)
+            ), 0)
+            FROM detalle_ventas dv
+            INNER JOIN ventas v ON v.id = dv.venta_id
+            WHERE v.fecha >= ? AND v.fecha < ?
+            """.trimIndent(),
+            arrayOf(desde.toString(), hasta.toString())
+        )
+
+        cursor.use {
+            return if (it.moveToFirst()) it.getDouble(0) else 0.0
+        }
+    }
+}
