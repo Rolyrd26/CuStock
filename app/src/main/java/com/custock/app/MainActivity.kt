@@ -140,6 +140,7 @@ private val NOMBRE_BASE_DATOS = "custock.db"
         agregarBoton(contenido, "🛒  Nueva venta") { abrirVentas() }
         agregarBoton(contenido, "📒  Control de fiados") { abrirFiados() }
         agregarBoton(contenido, "📊  Informes y ganancias") { abrirInformes() }
+        agregarBoton(contenido, "💾  Copias de seguridad") { abrirCopiasSeguridad() }
 
         val filaTitulo = LinearLayout(this).apply {
             gravity = Gravity.CENTER_VERTICAL
