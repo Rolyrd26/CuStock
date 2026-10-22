@@ -71,7 +71,8 @@ data class PagoFiadoDocumento(
     val fiadoId: Long,
     val cliente: String,
     val importe: Double,
-    val fecha: Long
+    val fecha: Long,
+    val moneda: String = "CUP"
 )
 data class Movimiento(
     val id: Long,
