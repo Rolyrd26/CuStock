@@ -1640,8 +1640,10 @@ parrafos.add(
                         "  • ${producto.nombre}: " +
                             "${producto.cantidad} unidades — " +
                             "Precio unitario: " +
-                            "${dinero(producto.precioUnitario)} CUP — " +
-                            "Subtotal: ${dinero(producto.subtotal)} CUP"
+                            
+"${dinero(producto.precioUnitario)} ${producto.moneda} — " +
+"Subtotal: ${dinero(producto.subtotal)} ${producto.moneda}"
+
                         to false
                     )
                 }
