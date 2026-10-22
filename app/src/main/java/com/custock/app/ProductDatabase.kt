@@ -790,7 +790,7 @@ val monedaVenta = monedasVenta.first()
 
         val cursor = readableDatabase.query(
             "pagos_fiados",
-            arrayOf("id", "fiado_id", "importe", "fecha"),
+            arrayOf("id", "fiado_id", "importe", "fecha", "moneda"),
             "fiado_id = ?",
             arrayOf(fiadoId.toString()),
             null,
@@ -806,6 +806,7 @@ val monedaVenta = monedasVenta.first()
                         fiadoId = it.getLong(1),
                         importe = it.getDouble(2),
                         fecha = it.getLong(3)
+                        moneda = it.getString(4)
                     )
                 )
             }
