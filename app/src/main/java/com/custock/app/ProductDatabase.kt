@@ -370,6 +370,7 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
                     put("importe", producto.cantidad * producto.coste)
                     put("detalle", "Existencias iniciales")
                     put("fecha", System.currentTimeMillis())
+                    put("moneda", producto.moneda)
                 }
 
                 db.insertOrThrow(
