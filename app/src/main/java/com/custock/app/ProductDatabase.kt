@@ -38,6 +38,7 @@ data class Fiado(
     val pagado: Double,
     val saldo: Double,
     val fecha: Long
+    val moneda: String = "CUP"
 )
 
 data class PagoFiado(
