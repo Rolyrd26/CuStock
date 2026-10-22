@@ -230,7 +230,7 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
         val cursor = readableDatabase.rawQuery(
             """
             SELECT id, tipo, producto_id, nombre_producto,
-                   cantidad, importe, detalle, fecha
+       cantidad, importe, detalle, fecha, moneda
             FROM movimientos
             ORDER BY fecha DESC, id DESC
             """.trimIndent(),
@@ -252,7 +252,8 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
                         cantidad = it.getInt(4),
                         importe = it.getDouble(5),
                         detalle = it.getString(6),
-                        fecha = it.getLong(7)
+                        fecha = it.getLong(7),
+                        moneda = it.getString(8)
                     )
                 )
             }
