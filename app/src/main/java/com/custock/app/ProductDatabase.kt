@@ -776,10 +776,11 @@ val monedaVenta = monedasVenta.first()
             while (it.moveToNext()) {
                 lineas.add(
                     LineaDocumento(
-                        nombre = it.getString(0),
+                                                nombre = it.getString(0),
                         cantidad = it.getInt(1),
                         precioUnitario = it.getDouble(2),
-                        subtotal = it.getDouble(3)
+                        subtotal = it.getDouble(3),
+                        moneda = it.getString(4)
                     )
                 )
             }
