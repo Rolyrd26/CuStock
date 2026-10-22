@@ -113,9 +113,6 @@ private val NOMBRE_BASE_DATOS = "custock.db"
         categorias.forEach { json.put(it) }
         prefs.edit().putString("categorias", json.toString()).apply()
     }
-
-
-    private fun agregarCabecera(raiz: LinearLayout, titulo: String, subtitulo: String) {
     
 private fun agregarCabecera(raiz: LinearLayout, titulo: String, subtitulo: String) {
     val cabecera = LinearLayout(this).apply {
