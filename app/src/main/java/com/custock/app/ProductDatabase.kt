@@ -581,6 +581,7 @@ val monedaVenta = monedasVenta.first()
                     put("total", total)
                     put("pagado", 0.0)
                     put("fecha", fecha)
+                    put("moneda", monedaVenta)
                 }
 
                 fiadoId = db.insertOrThrow(
