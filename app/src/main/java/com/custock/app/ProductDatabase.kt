@@ -198,24 +198,30 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
             )
         }
 
+        
         if (oldVersion < 5) {
-            db.execSQL(
-                "ALTER TABLE ventas ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
-            )
-            db.execSQL(
-                "ALTER TABLE detalle_ventas ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
-            )
-            db.execSQL(
-                "ALTER TABLE fiados ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
-            )
-            db.execSQL(
-                "ALTER TABLE pagos_fiados ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
-            )
-            db.execSQL(
-                "ALTER TABLE movimientos ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
-            )
+            if (oldVersion >= 2) {
+                db.execSQL(
+                    "ALTER TABLE ventas ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
+                )
+                db.execSQL(
+                    "ALTER TABLE detalle_ventas ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
+                )
+                db.execSQL(
+                    "ALTER TABLE fiados ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
+                )
+                db.execSQL(
+                    "ALTER TABLE pagos_fiados ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
+                )
+            }
+
+            if (oldVersion >= 3) {
+                db.execSQL(
+                    "ALTER TABLE movimientos ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
+                )
+            }
         }
-    }
+
 
     fun listarMovimientos(): List<Movimiento> {
         val resultado = mutableListOf<Movimiento>()
