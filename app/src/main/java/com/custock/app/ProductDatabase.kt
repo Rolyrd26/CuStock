@@ -414,6 +414,7 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
                         )
                         put("detalle", "Ajuste manual de existencias")
                         put("fecha", System.currentTimeMillis())
+                        put("moneda", producto.moneda)
                     }
 
                     db.insertOrThrow(
