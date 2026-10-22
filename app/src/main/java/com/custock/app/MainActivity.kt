@@ -1604,7 +1604,6 @@ venta.lineas.forEach { linea ->
             "${dinero(linea.subtotal)} ${linea.moneda}" to false
     )
 }
-            }
             parrafos.add("" to false)
         }
         parrafos.add("PAGOS DE FIADOS RECIBIDOS HOY" to true)
