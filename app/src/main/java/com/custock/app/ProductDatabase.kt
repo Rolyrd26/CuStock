@@ -110,7 +110,8 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
                 cliente TEXT NOT NULL DEFAULT '',
                 fecha INTEGER NOT NULL,
                 total REAL NOT NULL,
-                es_fiado INTEGER NOT NULL DEFAULT 0
+es_fiado INTEGER NOT NULL DEFAULT 0,
+moneda TEXT NOT NULL DEFAULT 'CUP'
             )
             """.trimIndent()
         )
@@ -125,8 +126,9 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
                 cantidad INTEGER NOT NULL,
                 precio_unitario REAL NOT NULL,
                 coste_unitario REAL NOT NULL,
-                subtotal REAL NOT NULL,
-                FOREIGN KEY(venta_id) REFERENCES ventas(id)
+subtotal REAL NOT NULL,
+moneda TEXT NOT NULL DEFAULT 'CUP',
+FOREIGN KEY(venta_id) REFERENCES ventas(id)
             )
             """.trimIndent()
         )
@@ -139,8 +141,9 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
                 cliente TEXT NOT NULL,
                 total REAL NOT NULL,
                 pagado REAL NOT NULL DEFAULT 0,
-                fecha INTEGER NOT NULL,
-                FOREIGN KEY(venta_id) REFERENCES ventas(id)
+fecha INTEGER NOT NULL,
+moneda TEXT NOT NULL DEFAULT 'CUP',
+FOREIGN KEY(venta_id) REFERENCES ventas(id)
             )
             """.trimIndent()
         )
@@ -151,8 +154,9 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 fiado_id INTEGER NOT NULL,
                 importe REAL NOT NULL,
-                fecha INTEGER NOT NULL,
-                FOREIGN KEY(fiado_id) REFERENCES fiados(id)
+fecha INTEGER NOT NULL,
+moneda TEXT NOT NULL DEFAULT 'CUP',
+FOREIGN KEY(fiado_id) REFERENCES fiados(id)
             )
             """.trimIndent()
         )
@@ -167,8 +171,9 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
                 nombre_producto TEXT NOT NULL DEFAULT '',
                 cantidad INTEGER NOT NULL DEFAULT 0,
                 importe REAL NOT NULL DEFAULT 0,
-                detalle TEXT NOT NULL DEFAULT '',
-                fecha INTEGER NOT NULL
+detalle TEXT NOT NULL DEFAULT '',
+fecha INTEGER NOT NULL,
+moneda TEXT NOT NULL DEFAULT 'CUP'
             )
             """.trimIndent()
         )
