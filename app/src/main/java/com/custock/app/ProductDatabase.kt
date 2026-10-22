@@ -553,6 +553,7 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
                         "Venta #$ventaId a ${cliente.trim().ifBlank { "Cliente general" }}"
                     )
                     put("fecha", fecha)
+                    put("moneda", producto.moneda)
                 }
 
                 db.insertOrThrow(
