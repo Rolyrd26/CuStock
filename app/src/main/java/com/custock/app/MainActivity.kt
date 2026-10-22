@@ -93,6 +93,7 @@ private val NOMBRE_BASE_DATOS = "custock.db"
         }
         guardarCategorias()
         construirPantalla()
+        ocultarBarrasSistema()
     }
 
     private fun ocultarBarrasSistema() {
