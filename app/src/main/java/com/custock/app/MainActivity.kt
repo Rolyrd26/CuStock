@@ -1572,10 +1572,15 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
         val fechaLegible = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(inicio))
         val ventas = baseDatos.ventasDelPeriodo(inicio, fin)
         val pagos = baseDatos.pagosFiadosDelPeriodo(inicio, fin)
-        val totalVentas = ventas.sumOf { it.total }
-        val ganancia = baseDatos.gananciaRegistrada(inicio, fin)
-        val totalPagos = pagos.sumOf { it.importe }
-        val pendientes = baseDatos.listarFiados("", true).sumOf { it.saldo }
+        
+val ventasPorMoneda = baseDatos.totalVentasPorMoneda(inicio, fin)
+val gananciasPorMoneda = baseDatos.gananciaPorMoneda(inicio, fin)
+val pagosPorMoneda = pagos.groupBy { it.moneda }
+    .mapValues { (_, lista) -> lista.sumOf { it.importe } }
+val fiadosPorMoneda = baseDatos.listarFiados("", true)
+    .groupBy { it.moneda }
+    .mapValues { (_, lista) -> lista.sumOf { it.saldo } }
+
 
         val parrafos = mutableListOf<Pair<String, Boolean>>()
         parrafos.add("CuStock — Informe diario" to true)
