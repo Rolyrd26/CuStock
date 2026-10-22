@@ -221,7 +221,7 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
                 )
             }
         }
-
+    }
 
     fun listarMovimientos(): List<Movimiento> {
         val resultado = mutableListOf<Movimiento>()
