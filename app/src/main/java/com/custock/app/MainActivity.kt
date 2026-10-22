@@ -132,10 +132,8 @@ private fun agregarCabecera(raiz: LinearLayout, titulo: String, subtitulo: Strin
                     Color.rgb(45, 115, 190)
                 )
             }
-        ).apply {
-            cornerRadius = dp(22).toFloat()
-        }
-        elevation = dp(4).toFloat()
+                )
+        elevation = 0f
     }
 
     val fila = LinearLayout(this).apply {
@@ -185,12 +183,10 @@ private fun agregarCabecera(raiz: LinearLayout, titulo: String, subtitulo: Strin
 
     cabecera.addView(fila)
 
-    val parametros = LinearLayout.LayoutParams(
+        val parametros = LinearLayout.LayoutParams(
         LinearLayout.LayoutParams.MATCH_PARENT,
         LinearLayout.LayoutParams.WRAP_CONTENT
-    ).apply {
-        setMargins(dp(12), dp(12), dp(12), dp(4))
-    }
+    )
 
     raiz.addView(cabecera, parametros)
 }
