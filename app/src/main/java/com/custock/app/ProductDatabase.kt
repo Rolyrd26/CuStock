@@ -915,7 +915,27 @@ fun pagosFiadosDelPeriodo(
             return if (it.moveToFirst()) it.getDouble(0) else 0.0
         }
     }
+fun totalVentasPorMoneda(
+    desde: Long,
+    hasta: Long
+): Map<String, Double> {
+    val totales = mutableMapOf<String, Double>()
 
+    val cursor = readableDatabase.rawQuery(
+        "SELECT moneda, COALESCE(SUM(total), 0) " +
+            "FROM ventas WHERE fecha >= ? AND fecha < ? " +
+            "GROUP BY moneda",
+        arrayOf(desde.toString(), hasta.toString())
+    )
+
+    cursor.use {
+        while (it.moveToNext()) {
+            totales[it.getString(0)] = it.getDouble(1)
+        }
+    }
+
+    return totales
+}
     fun gananciaRegistrada(desde: Long, hasta: Long): Double {
         val cursor = readableDatabase.rawQuery(
             """
