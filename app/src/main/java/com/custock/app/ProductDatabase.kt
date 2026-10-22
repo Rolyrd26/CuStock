@@ -676,6 +676,7 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
                 put("fiado_id", fiadoId)
                 put("importe", importe)
                 put("fecha", System.currentTimeMillis())
+                put("moneda", monedaFiado)
             }
 
             val pagoId = db.insertOrThrow(
