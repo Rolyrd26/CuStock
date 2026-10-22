@@ -1747,7 +1747,7 @@ val documentoUri = DocumentsContract.createDocument(
                 contenido.addView(TextView(this).apply {
                     text = "$tipoVisible\n" +
                         "${movimiento.nombreProducto}\n" +
-                        "Importe: ${dinero(movimiento.importe)} CUP" +
+                        "Importe: ${dinero(movimiento.importe)} ${movimiento.moneda}" +
                         cantidadTexto +
                         "\n${movimiento.detalle}\n" +
                         fechaHora(movimiento.fecha)
