@@ -1,0 +1,44 @@
+
+name: Generar clave de firma de CuStock
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generar-clave:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comprobar contraseña
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_PASSWORD" ]; then
+            echo "Falta el secreto KEYSTORE_PASSWORD."
+            exit 1
+          fi
+
+      - name: Generar clave
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          keytool -genkeypair -noprompt \
+            -storetype PKCS12 \
+            -keystore custock-release.p12 \
+            -storepass "$KEYSTORE_PASSWORD" \
+            -keypass "$KEYSTORE_PASSWORD" \
+            -alias custock \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -dname "CN=CuStock, OU=App, O=CuStock, L=Unknown, ST=Unknown, C=CU"
+
+      - name: Guardar clave temporalmente
+        uses: actions/upload-artifact@v4
+        with:
+          name: CuStock-clave-firma
+          path: custock-release.p12
+          if-no-files-found: error
+          retention-days: 1
