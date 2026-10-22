@@ -1077,9 +1077,9 @@ totalTexto.text = "TOTAL: ${dinero(total)} $monedaCarrito"
             text = "Cliente: ${fiado.cliente}\n" +
                 "Fiado #${fiado.id}\n" +
                 "Fecha: ${fechaHora(fiado.fecha)}\n\n" +
-                "Importe original: ${dinero(fiado.total)} CUP\n" +
-                "Total pagado: ${dinero(fiado.pagado)} CUP\n" +
-                "Saldo pendiente: ${dinero(fiado.saldo)} CUP"
+                "Importe original: ${dinero(fiado.total)} ${fiado.moneda}\n" +
+"Total pagado: ${dinero(fiado.pagado)} ${fiado.moneda}\n" +
+"Saldo pendiente: ${dinero(fiado.saldo)} ${fiado.moneda}"
             textSize = 16f
             setTextColor(azul)
         })
