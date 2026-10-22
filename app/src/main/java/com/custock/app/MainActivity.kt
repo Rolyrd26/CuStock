@@ -318,13 +318,7 @@ private fun abrirMenuInferior() {
             typeface = Typeface.DEFAULT_BOLD
             setTextColor(azul)
         })
-                agregarBoton(contenido, "🛒  Nueva venta") { abrirVentas() }
-        agregarBoton(contenido, "📒  Control de fiados") { abrirFiados() }
-        agregarBoton(contenido, "📜  Historial de movimientos") {
-            abrirHistorialMovimientos()
-        }
-        agregarBoton(contenido, "📊  Informes y ganancias") { abrirInformes() }
-        agregarBoton(contenido, "⚙️  Ajustes") { abrirAjustes() }
+                
         val filaTitulo = LinearLayout(this).apply {
             gravity = Gravity.CENTER_VERTICAL
             setPadding(0, dp(16), 0, dp(4))
