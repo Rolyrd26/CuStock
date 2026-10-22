@@ -622,8 +622,8 @@ contenido.addView(TextView(this).apply {
                 })
                 tarjeta.addView(TextView(this).apply {
                     text = "Existencias: ${producto.cantidad}\n" +
-                        "Coste: ${dinero(producto.coste)} CUP\n" +
-                        "Venta: ${dinero(producto.venta)} CUP\n" +
+                        "Coste: ${dinero(producto.coste)} ${producto.moneda}\n" +
+"Venta: ${dinero(producto.venta)} ${producto.moneda}\n" +
                         "Referencia: ${producto.referencia.ifBlank { "—" }}\n" +
                         "Descripción: ${producto.descripcion.ifBlank { "—" }}"
                     textSize = 14f
