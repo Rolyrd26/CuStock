@@ -80,7 +80,7 @@ data class Movimiento(
     val fecha: Long
 )
 class ProductDatabase(context: Context) :
-    SQLiteOpenHelper(context, "custock.db", null, 3) {
+    SQLiteOpenHelper(context, "custock.db", null, 4) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
             """
@@ -92,7 +92,8 @@ class ProductDatabase(context: Context) :
                 coste REAL NOT NULL DEFAULT 0,
                 venta REAL NOT NULL DEFAULT 0,
                 referencia TEXT NOT NULL DEFAULT '',
-                descripcion TEXT NOT NULL DEFAULT ''
+descripcion TEXT NOT NULL DEFAULT '',
+moneda TEXT NOT NULL DEFAULT 'CUP'
             )
             """.trimIndent()
         )
@@ -182,6 +183,11 @@ class ProductDatabase(context: Context) :
         }
         if (oldVersion < 3) {
             crearTablaMovimientos(db)
+        }
+        if (oldVersion < 4) {
+    db.execSQL(
+        "ALTER TABLE productos ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
+    )
         }
         }
     fun listarMovimientos(): List<Movimiento> {
