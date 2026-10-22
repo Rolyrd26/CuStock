@@ -53,7 +53,8 @@ data class LineaDocumento(
     val nombre: String,
     val cantidad: Int,
     val precioUnitario: Double,
-    val subtotal: Double
+    val subtotal: Double,
+    val moneda: String = "CUP"
 )
 
 data class VentaDocumento(
