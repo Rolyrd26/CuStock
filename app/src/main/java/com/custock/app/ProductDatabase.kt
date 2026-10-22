@@ -805,7 +805,7 @@ val monedaVenta = monedasVenta.first()
                         id = it.getLong(0),
                         fiadoId = it.getLong(1),
                         importe = it.getDouble(2),
-                        fecha = it.getLong(3)
+                        fecha = it.getLong(3),
                         moneda = it.getString(4)
                     )
                 )
