@@ -49,6 +49,18 @@ jobs:
           fi
           gradle assembleDebug
 
+      - name: Verificar firma del APK
+        run: |
+          APKSIGNER="$ANDROID_HOME/build-tools/35.0.0/apksigner"
+          if [ ! -x "$APKSIGNER" ]; then
+            APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n 1)
+          fi
+          if [ ! -x "$APKSIGNER" ]; then
+            echo "No se encontró apksigner."
+            exit 1
+          fi
+          "$APKSIGNER" verify --verbose --print-certs app/build/outputs/apk/debug/app-debug.apk
+
       - name: Guardar APK
         uses: actions/upload-artifact@v4
         with:
