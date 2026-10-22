@@ -954,4 +954,32 @@ fun totalVentasPorMoneda(
             return if (it.moveToFirst()) it.getDouble(0) else 0.0
         }
     }
+    fun gananciaPorMoneda(
+    desde: Long,
+    hasta: Long
+): Map<String, Double> {
+    val totales = mutableMapOf<String, Double>()
+
+    val cursor = readableDatabase.rawQuery(
+        """
+        SELECT dv.moneda, COALESCE(SUM(
+            dv.cantidad *
+            (dv.precio_unitario - dv.coste_unitario)
+        ), 0)
+        FROM detalle_ventas dv
+        INNER JOIN ventas v ON v.id = dv.venta_id
+        WHERE v.fecha >= ? AND v.fecha < ?
+        GROUP BY dv.moneda
+        """.trimIndent(),
+        arrayOf(desde.toString(), hasta.toString())
+    )
+
+    cursor.use {
+        while (it.moveToNext()) {
+            totales[it.getString(0)] = it.getDouble(1)
+        }
+    }
+
+    return totales
+    }
 }
