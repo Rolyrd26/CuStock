@@ -1615,11 +1615,13 @@ venta.lineas.forEach { linea ->
                 Locale.getDefault()
             ).format(Date(pago.fecha))
 
-            parrafos.add(
-                "$hora — ${pago.cliente} — " +
-                    "Fiado #${pago.fiadoId}: " +
-                    "${dinero(pago.importe)} CUP" to false
-            )
+            
+parrafos.add(
+    "$hora — ${pago.cliente} — " +
+        "Fiado #${pago.fiadoId}: " +
+        "${dinero(pago.importe)} ${pago.moneda}" to false
+)
+
 
             val fiadoRelacionado = baseDatos.listarFiados("", false)
                 .firstOrNull { it.id == pago.fiadoId }
