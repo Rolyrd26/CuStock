@@ -494,6 +494,13 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
             require(total.isFinite()) {
                 "El total de la venta no es válido."
             }
+            val monedasVenta = detalles.map { it.first.moneda }.distinct()
+
+require(monedasVenta.size == 1) {
+    "No puedes mezclar monedas diferentes en una misma venta."
+}
+
+val monedaVenta = monedasVenta.first()
 
             val fecha = System.currentTimeMillis()
             val ventaValores = ContentValues().apply {
