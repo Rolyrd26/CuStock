@@ -878,7 +878,7 @@ fun pagosFiadosDelPeriodo(
 
     val cursor = readableDatabase.rawQuery(
         """
-        SELECT p.id, p.fiado_id, f.cliente, p.importe, p.fecha
+        SELECT p.id, p.fiado_id, f.cliente, p.importe, p.fecha, p.moneda
         FROM pagos_fiados p
         INNER JOIN fiados f ON f.id = p.fiado_id
         WHERE p.fecha >= ? AND p.fecha < ?
@@ -895,7 +895,8 @@ fun pagosFiadosDelPeriodo(
                     fiadoId = it.getLong(1),
                     cliente = it.getString(2),
                     importe = it.getDouble(3),
-                    fecha = it.getLong(4)
+                    fecha = it.getLong(4),
+                    moneda = it.getString(5)
                 )
             )
         }
