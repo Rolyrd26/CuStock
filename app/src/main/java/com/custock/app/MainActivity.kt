@@ -945,7 +945,9 @@ moneda = monedas[selectorMoneda.selectedItemPosition].first
                 }
             }
 
-            totalTexto.text = "TOTAL: ${dinero(total)} CUP"
+            val monedaCarrito = carrito.firstOrNull()
+    ?.let { baseDatos.obtenerProducto(it.productoId)?.moneda } ?: "CUP"
+totalTexto.text = "TOTAL: ${dinero(total)} $monedaCarrito"
         }
 
         confirmar = { esFiado ->
