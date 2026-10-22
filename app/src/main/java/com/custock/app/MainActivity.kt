@@ -1763,9 +1763,12 @@ val documentoUri = DocumentsContract.createDocument(
         val inicio = calendario.timeInMillis
         calendario.add(Calendar.DAY_OF_MONTH, 1)
         val fin = calendario.timeInMillis
-        val ventas = baseDatos.totalVentas(inicio, fin)
-        val ganancia = baseDatos.gananciaRegistrada(inicio, fin)
-        val fiadosPendientes = baseDatos.listarFiados("", true).sumOf { it.saldo }
+        val ventasPorMoneda = baseDatos.totalVentasPorMoneda(inicio, fin)
+val gananciaPorMoneda = baseDatos.gananciaPorMoneda(inicio, fin)
+val fiadosPorMoneda = baseDatos.listarFiados("", true)
+    .groupBy { it.moneda }
+    .mapValues { (_, fiados) -> fiados.sumOf { it.saldo } }
+
         val carpeta = carpetaInformesGuardada()
 
         val raiz = nuevaRaiz()
