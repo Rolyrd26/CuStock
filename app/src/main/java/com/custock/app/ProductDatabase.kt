@@ -45,8 +45,10 @@ data class PagoFiado(
     val id: Long,
     val fiadoId: Long,
     val importe: Double,
-    val fecha: Long
+    val fecha: Long,
+    val moneda: String = "CUP"
 )
+
 data class LineaDocumento(
     val nombre: String,
     val cantidad: Int,
