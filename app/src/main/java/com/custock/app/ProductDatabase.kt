@@ -767,8 +767,8 @@ val monedaVenta = monedasVenta.first()
         val lineas = mutableListOf<LineaDocumento>()
 
         val cursor = readableDatabase.rawQuery(
-            "SELECT nombre_producto, cantidad, precio_unitario, subtotal " +
-                "FROM detalle_ventas WHERE venta_id = ? ORDER BY id ASC",
+            "SELECT nombre_producto, cantidad, precio_unitario, subtotal, moneda " +
+    "FROM detalle_ventas WHERE venta_id = ? ORDER BY id ASC",
             arrayOf(ventaId.toString())
         )
 
