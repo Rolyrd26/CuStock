@@ -201,6 +201,74 @@ private fun agregarCabecera(raiz: LinearLayout, titulo: String, subtitulo: Strin
 
 
     
+private fun abrirMenuInferior() {
+    val dialogo = android.app.Dialog(this)
+
+    val panel = LinearLayout(this).apply {
+        orientation = LinearLayout.VERTICAL
+        setPadding(dp(22), dp(12), dp(22), dp(24))
+        background = GradientDrawable().apply {
+            setColor(if (temaOscuro) Color.rgb(25, 30, 38) else Color.WHITE)
+            cornerRadii = floatArrayOf(
+                dp(24).toFloat(), dp(24).toFloat(),
+                dp(24).toFloat(), dp(24).toFloat(),
+                0f, 0f, 0f, 0f
+            )
+        }
+    }
+
+    panel.addView(View(this).apply {
+        setBackgroundColor(if (temaOscuro) Color.LTGRAY else Color.rgb(210, 220, 235))
+    }, LinearLayout.LayoutParams(dp(42), dp(5)).apply {
+        gravity = Gravity.CENTER
+        bottomMargin = dp(16)
+    })
+
+    panel.addView(TextView(this).apply {
+        text = "Menú de CuStock"
+        textSize = 21f
+        typeface = Typeface.DEFAULT_BOLD
+        setTextColor(azul)
+        setPadding(0, 0, 0, dp(12))
+    })
+
+    val opciones = listOf(
+        "🛒  Nueva venta" to { abrirVentas() },
+        "📒  Control de fiados" to { abrirFiados() },
+        "📜  Historial de movimientos" to { abrirHistorialMovimientos() },
+        "📊  Informes y ganancias" to { abrirInformes() },
+        "⚙️  Ajustes" to { abrirAjustes() }
+    )
+
+    opciones.forEach { (texto, accion) ->
+        agregarBoton(panel, texto) {
+            dialogo.dismiss()
+            accion()
+        }
+    }
+
+    dialogo.setContentView(panel)
+    dialogo.window?.apply {
+        setBackgroundDrawableResource(android.R.color.transparent)
+        setLayout(
+            android.view.WindowManager.LayoutParams.MATCH_PARENT,
+            android.view.WindowManager.LayoutParams.WRAP_CONTENT
+        )
+        setGravity(Gravity.BOTTOM)
+        addFlags(android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        attributes = attributes.apply {
+            dimAmount = 0.45f
+        }
+    }
+    dialogo.show()
+    dialogo.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    dialogo.window?.setLayout(
+        android.view.WindowManager.LayoutParams.MATCH_PARENT,
+        android.view.WindowManager.LayoutParams.WRAP_CONTENT
+    )
+    dialogo.window?.setGravity(Gravity.BOTTOM)
+}
+
     private fun agregarBoton(contenedor: LinearLayout, texto: String, accion: () -> Unit) {
         val boton = Button(this).apply {
             text = texto
