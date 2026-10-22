@@ -39,8 +39,8 @@ class MainActivity : Activity() {
     private val iconos = mapOf(
         "ropa" to "👕", "alimentos" to "🥫", "lencería" to "🛏️",
         "lenceria" to "🛏️", "calzado" to "👟", "higiene" to "🧴",
-        "bebidas" to "🥤", "electrodomésticos" to "🧊",
-        "electrodomesticos" to "🧊", "accesorios" to "👜", "otros" to "📦"
+        "bebidas" to "🥤", "electrodomésticos" to "🔌",
+        "electrodomesticos" to "🔌", "accesorios" to "👜", "otros" to "📦"
     )
     private var temaOscuro = false
 
