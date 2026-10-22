@@ -1163,6 +1163,7 @@ totalTexto.text = "TOTAL: ${dinero(total)} $monedaCarrito"
         val campo = EditText(this).apply {
             hint = "Importe del pago en ${fiado.moneda}"
 inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+        }
         val dialog = AlertDialog.Builder(this).setTitle("Registrar pago")
             .setMessage(
                 "Cliente: ${fiado.cliente}\nSaldo pendiente: ${dinero(fiado.saldo)} ${fiado.moneda}\n" +
