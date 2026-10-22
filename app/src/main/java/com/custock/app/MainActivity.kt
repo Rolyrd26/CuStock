@@ -693,10 +693,8 @@ contenido.addView(TextView(this).apply {
         val nombre = campo("Nombre del producto", existente?.nombre.orEmpty())
         val cantidad = campo("Existencias", existente?.cantidad?.toString() ?: "0")
         cantidad.inputType = InputType.TYPE_CLASS_NUMBER
-        val coste = campo("Precio de coste en CUP", existente?.coste?.toString() ?: "0")
-        coste.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-        val venta = campo("Precio de venta en CUP", existente?.venta?.toString() ?: "0")
-        venta.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+        val coste = campo("Precio de coste", existente?.coste?.toString() ?: "0")
+        val venta = campo("Precio de venta", existente?.venta?.toString() ?: "0")
         val referencia = campo("Referencia (opcional)", existente?.referencia.orEmpty())
         val descripcion = campo("Descripción (opcional)", existente?.descripcion.orEmpty())
 val monedas = listOf(
