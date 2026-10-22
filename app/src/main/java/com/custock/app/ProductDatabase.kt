@@ -545,6 +545,7 @@ val monedaVenta = monedasVenta.first()
                     put("precio_unitario", linea.precioUnitario)
                     put("coste_unitario", producto.coste)
                     put("subtotal", subtotal)
+                    put("moneda", monedaVenta)
                 }
 
                 db.insertOrThrow(
