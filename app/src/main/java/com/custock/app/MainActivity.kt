@@ -118,7 +118,7 @@ private fun agregarCabecera(raiz: LinearLayout, titulo: String, subtitulo: Strin
     val cabecera = LinearLayout(this).apply {
         orientation = LinearLayout.VERTICAL
         gravity = Gravity.CENTER_VERTICAL
-        setPadding(dp(24), dp(22), dp(16), dp(22))
+        setPadding(dp(24), dp(34), dp(16), dp(28))
         background = GradientDrawable(
             GradientDrawable.Orientation.TL_BR,
             if (temaOscuro) {
