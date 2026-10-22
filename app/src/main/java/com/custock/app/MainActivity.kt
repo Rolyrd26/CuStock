@@ -376,7 +376,7 @@ private fun abrirMenuInferior() {
             text = "Gestión del negocio"
             textSize = 23f
             typeface = Typeface.DEFAULT_BOLD
-            setTextColor(azul)
+            setTextColor(if (temaOscuro) Color.WHITE else azul)
         })
                 
         val filaTitulo = LinearLayout(this).apply {
