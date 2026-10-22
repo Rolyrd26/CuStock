@@ -1618,7 +1618,7 @@ fiadosPorMoneda.forEach { (moneda, total) ->
             
 parrafos.add(
     "Tipo: ${if (venta.esFiado) "Fiada" else "Pagada"} — " +
-        "Total: ${dinero(venta.total)} ${venta.moneda}" to false
+        "Total: ${dinero(venta.total)} ${venta.lineas.firstOrNull()?.moneda ?: "CUP"}" to false
 )
 venta.lineas.forEach { linea ->
     parrafos.add(
@@ -1864,7 +1864,7 @@ val fiadosPorMoneda = baseDatos.listarFiados("", true)
                     "Cliente: ${venta.cliente.ifBlank { "Sin nombre" }}\n" +
                     "Tipo: ${if (venta.esFiado) "Fiada" else "Pagada"}\n" +
                     
-"Total: ${dinero(venta.total)} ${venta.moneda}\n" +
+"Total: ${dinero(venta.total)} ${venta.lineas.firstOrNull()?.moneda ?: "CUP"}\n" +
 venta.lineas.joinToString("\n") { linea ->
     "• ${linea.nombre}: ${linea.cantidad} × " +
         "${dinero(linea.precioUnitario)} ${linea.moneda} = " +
