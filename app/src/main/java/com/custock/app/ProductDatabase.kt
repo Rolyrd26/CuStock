@@ -681,7 +681,7 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
             )
             val datosFiado = db.query(
                 "fiados",
-                arrayOf("cliente", "venta_id"),
+                arrayOf("cliente", "venta_id", "moneda"),
                 "id = ?",
                 arrayOf(fiadoId.toString()),
                 null,
@@ -691,6 +691,7 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
 
             val clientePago: String
             val ventaPago: Long
+            val monedaPago: String
 
             datosFiado.use {
                 if (!it.moveToFirst()) {
@@ -698,6 +699,7 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
                 }
                 clientePago = it.getString(0)
                 ventaPago = it.getLong(1)
+                monedaPago = it.getString(2)
             }
 
             val movimientoPago = ContentValues().apply {
