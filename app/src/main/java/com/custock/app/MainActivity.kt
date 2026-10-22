@@ -1780,9 +1780,20 @@ val fiadosPorMoneda = baseDatos.listarFiados("", true)
         agregarBoton(contenido, "← Volver al inicio") { construirPantalla() }
         contenido.addView(TextView(this).apply {
             text = "Resumen de hoy\n\nFecha: ${SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())}\n\n" +
-                "Ventas registradas: ${dinero(ventas)} CUP\n" +
-                "Ganancia bruta registrada: ${dinero(ganancia)} CUP\n" +
-                "Fiados pendientes: ${dinero(fiadosPendientes)} CUP\n\n" +
+                
+"Ventas registradas:\n" +
+    ventasPorMoneda.entries.joinToString("\n") { (moneda, total) ->
+        "${dinero(total)} $moneda"
+    }.ifBlank { "Sin ventas" } + "\n\n" +
+"Ganancia bruta registrada:\n" +
+    gananciaPorMoneda.entries.joinToString("\n") { (moneda, total) ->
+        "${dinero(total)} $moneda"
+    }.ifBlank { "Sin ganancias" } + "\n\n" +
+"Fiados pendientes:\n" +
+    fiadosPorMoneda.entries.joinToString("\n") { (moneda, total) ->
+        "${dinero(total)} $moneda"
+    }.ifBlank { "Sin fiados pendientes" } + "\n\n" +
+
                 "Carpeta de informes: ${if (carpeta == null) "No seleccionada" else "Seleccionada"}"
             textSize = 18f
             setTextColor(azul)
