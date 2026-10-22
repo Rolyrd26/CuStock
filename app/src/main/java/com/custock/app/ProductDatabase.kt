@@ -642,7 +642,7 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
         try {
             val cursor = db.query(
                 "fiados",
-                arrayOf("total", "pagado"),
+                arrayOf("total", "pagado", "moneda"),
                 "id = ?",
                 arrayOf(fiadoId.toString()),
                 null,
@@ -652,6 +652,7 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
 
             val total: Double
             val pagado: Double
+            val monedaFiado: String
 
             cursor.use {
                 if (!it.moveToFirst()) {
@@ -659,6 +660,7 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
                 }
                 total = it.getDouble(0)
                 pagado = it.getDouble(1)
+                monedaFiado = it.getString(2)
             }
 
             val saldo = total - pagado
