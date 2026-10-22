@@ -40,7 +40,14 @@ jobs:
           test -s custock-release.p12
 
       - name: Compilar CuStock
-        run: gradle assembleDebug
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_PASSWORD" ]; then
+            echo "Falta el secreto KEYSTORE_PASSWORD."
+            exit 1
+          fi
+          gradle assembleDebug
 
       - name: Guardar APK
         uses: actions/upload-artifact@v4
