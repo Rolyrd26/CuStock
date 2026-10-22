@@ -1874,9 +1874,11 @@ venta.lineas.joinToString("\n") { linea ->
             } else {
                 "Productos asociados a este fiado:\n" +
                     productosAsociados.joinToString("\n") { producto ->
-                        "• ${producto.nombre}: ${producto.cantidad} unidades — " +
-                            "${dinero(producto.precioUnitario)} CUP por unidad — " +
-                            "Subtotal: ${dinero(producto.subtotal)} CUP"
+                        
+"• ${producto.nombre}: ${producto.cantidad} unidades — " +
+    "${dinero(producto.precioUnitario)} ${producto.moneda} por unidad — " +
+    "Subtotal: ${dinero(producto.subtotal)} ${producto.moneda}"
+
                     }
             }
 
