@@ -253,7 +253,7 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
                         coste = it.getDouble(it.getColumnIndexOrThrow("coste")),
                         venta = it.getDouble(it.getColumnIndexOrThrow("venta")),
                         referencia = it.getString(it.getColumnIndexOrThrow("referencia")),
-                        descripcion = it.getString(it.getColumnIndexOrThrow("descripcion"))
+                        descripcion = it.getString(it.getColumnIndexOrThrow("descripcion")),
                         moneda = it.getString(it.getColumnIndexOrThrow("moneda"))
                     )
                 )
