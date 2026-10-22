@@ -80,7 +80,7 @@ data class Movimiento(
     val fecha: Long
 )
 class ProductDatabase(context: Context) :
-    SQLiteOpenHelper(context, "custock.db", null, 4) {
+    SQLiteOpenHelper(context, "custock.db", null, 5) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
             """
@@ -173,7 +173,8 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
             """.trimIndent()
         )
     }
-        override fun onUpgrade(
+        
+    override fun onUpgrade(
         db: SQLiteDatabase,
         oldVersion: Int,
         newVersion: Int
@@ -181,15 +182,36 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
         if (oldVersion < 2) {
             crearTablasVentas(db)
         }
+
         if (oldVersion < 3) {
             crearTablaMovimientos(db)
         }
+
         if (oldVersion < 4) {
-    db.execSQL(
-        "ALTER TABLE productos ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
-    )
+            db.execSQL(
+                "ALTER TABLE productos ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
+            )
         }
+
+        if (oldVersion < 5) {
+            db.execSQL(
+                "ALTER TABLE ventas ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
+            )
+            db.execSQL(
+                "ALTER TABLE detalle_ventas ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
+            )
+            db.execSQL(
+                "ALTER TABLE fiados ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
+            )
+            db.execSQL(
+                "ALTER TABLE pagos_fiados ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
+            )
+            db.execSQL(
+                "ALTER TABLE movimientos ADD COLUMN moneda TEXT NOT NULL DEFAULT 'CUP'"
+            )
         }
+    }
+
     fun listarMovimientos(): List<Movimiento> {
         val resultado = mutableListOf<Movimiento>()
 
