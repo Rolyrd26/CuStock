@@ -823,6 +823,13 @@ moneda = monedas[selectorMoneda.selectedItemPosition].first
                 AlertDialog.Builder(this).setTitle("Selecciona un producto")
                     .setItems(opciones) { _, indice ->
                         val producto = disponibles[indice]
+                        if (carrito.isNotEmpty()) {
+    val monedaActual = baseDatos.obtenerProducto(carrito.first().productoId)?.moneda
+    if (monedaActual != null && monedaActual != producto.moneda) {
+        aviso("No puedes mezclar monedas en una venta. Esta venta usa $monedaActual.")
+        return@setItems
+    }
+                        }
                         val yaEnCarrito = carrito.filter { it.productoId == producto.id }.sumOf { it.cantidad }
                         val restante = producto.cantidad - yaEnCarrito
                         if (restante <= 0) aviso("Ya añadiste todas las existencias disponibles de ${producto.nombre}.")
