@@ -313,6 +313,7 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
             put("venta", producto.venta)
             put("referencia", producto.referencia)
             put("descripcion", producto.descripcion)
+            put("moneda", producto.moneda)
         }
 
                 return if (producto.id == 0L) {
