@@ -14,7 +14,8 @@ data class Producto(
     val coste: Double,
     val venta: Double,
     val referencia: String = "",
-    val descripcion: String = ""
+    val descripcion: String = "",
+    val moneda: String = "CUP"
 )
 
 data class LineaVenta(
