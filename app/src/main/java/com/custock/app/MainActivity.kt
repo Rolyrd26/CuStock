@@ -302,7 +302,7 @@ private fun abrirMenuInferior() {
         )
     )
 
-    }
+    
 
     dialogo.setContentView(panel)
     dialogo.window?.apply {
