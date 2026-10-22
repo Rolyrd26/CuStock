@@ -699,6 +699,36 @@ contenido.addView(TextView(this).apply {
         venta.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
         val referencia = campo("Referencia (opcional)", existente?.referencia.orEmpty())
         val descripcion = campo("Descripción (opcional)", existente?.descripcion.orEmpty())
+val monedas = listOf(
+    "CUP" to "Peso cubano (CUP)",
+    "USD" to "Dólar estadounidense (USD)",
+    "EUR" to "Euro (EUR)",
+    "MXN" to "Peso mexicano (MXN)",
+    "COP" to "Peso colombiano (COP)",
+    "ARS" to "Peso argentino (ARS)",
+    "PEN" to "Sol peruano (PEN)",
+    "BRL" to "Real brasileño (BRL)"
+)
+
+val selectorMoneda = Spinner(this)
+selectorMoneda.adapter = ArrayAdapter(
+    this,
+    android.R.layout.simple_spinner_dropdown_item,
+    monedas.map { it.second }
+)
+
+selectorMoneda.setSelection(
+    monedas.indexOfFirst { it.first == (existente?.moneda ?: "CUP") }
+        .coerceAtLeast(0)
+)
+
+contenedor.addView(TextView(this).apply {
+    text = "Moneda del producto"
+    textSize = 14f
+    setTextColor(azul)
+})
+
+contenedor.addView(selectorMoneda)
 
         val dialog = AlertDialog.Builder(this)
             .setTitle(if (existente == null) "Nuevo producto" else "Editar producto")
@@ -721,7 +751,8 @@ contenido.addView(TextView(this).apply {
                             id = existente?.id ?: 0L, nombre = n, categoria = categoria,
                             cantidad = q, coste = c, venta = v,
                             referencia = referencia.text.toString().trim(),
-                            descripcion = descripcion.text.toString().trim()
+descripcion = descripcion.text.toString().trim(),
+moneda = monedas[selectorMoneda.selectedItemPosition].first
                         )
                     )
                     if (resultado > 0) {
