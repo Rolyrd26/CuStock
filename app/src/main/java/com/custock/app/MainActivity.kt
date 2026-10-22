@@ -1036,8 +1036,9 @@ totalTexto.text = "TOTAL: ${dinero(total)} $monedaCarrito"
                 })
                 tarjeta.addView(TextView(this).apply {
                     text = "Fiado #${fiado.id} · ${fechaHora(fiado.fecha)}\n" +
-                        "Total: ${dinero(fiado.total)} CUP\nPagado: ${dinero(fiado.pagado)} CUP\n" +
-                        "Pendiente: ${dinero(fiado.saldo)} CUP"
+                        "Total: ${dinero(fiado.total)} ${fiado.moneda}\n" +
+    "Pagado: ${dinero(fiado.pagado)} ${fiado.moneda}\n" +
+    "Pendiente: ${dinero(fiado.saldo)} ${fiado.moneda}"
                     textSize = 14f
                 })
                 tarjeta.addView(Button(this).apply {
