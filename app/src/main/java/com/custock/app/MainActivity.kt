@@ -1587,10 +1587,27 @@ val fiadosPorMoneda = baseDatos.listarFiados("", true)
         parrafos.add("Fecha: $fechaLegible" to false)
         parrafos.add("" to false)
         parrafos.add("RESUMEN DEL DÍA" to true)
-        parrafos.add("Ventas registradas: ${dinero(totalVentas)} CUP" to false)
-        parrafos.add("Ganancia bruta registrada: ${dinero(ganancia)} CUP" to false)
-        parrafos.add("Cobros de fiados recibidos hoy: ${dinero(totalPagos)} CUP" to false)
-        parrafos.add("Saldo total de fiados pendientes: ${dinero(pendientes)} CUP" to false)
+        
+parrafos.add("Ventas registradas:" to true)
+ventasPorMoneda.forEach { (moneda, total) ->
+    parrafos.add("  ${dinero(total)} $moneda" to false)
+}
+
+parrafos.add("Ganancia bruta registrada:" to true)
+gananciasPorMoneda.forEach { (moneda, total) ->
+    parrafos.add("  ${dinero(total)} $moneda" to false)
+}
+
+parrafos.add("Cobros de fiados recibidos hoy:" to true)
+pagosPorMoneda.forEach { (moneda, total) ->
+    parrafos.add("  ${dinero(total)} $moneda" to false)
+}
+
+parrafos.add("Saldo de fiados pendientes:" to true)
+fiadosPorMoneda.forEach { (moneda, total) ->
+    parrafos.add("  ${dinero(total)} $moneda" to false)
+}
+
         parrafos.add("" to false)
         parrafos.add("DETALLE DE VENTAS" to true)
         if (ventas.isEmpty()) parrafos.add("No hay ventas registradas hoy." to false)
