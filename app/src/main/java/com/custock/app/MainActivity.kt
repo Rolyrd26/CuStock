@@ -1102,8 +1102,8 @@ totalTexto.text = "TOTAL: ${dinero(total)} $monedaCarrito"
                 contenido.addView(TextView(this).apply {
                     text = "${producto.nombre}\n" +
                         "Cantidad: ${producto.cantidad}\n" +
-                        "Precio unitario: ${dinero(producto.precioUnitario)} CUP\n" +
-                        "Subtotal: ${dinero(producto.subtotal)} CUP"
+                        "Precio unitario: ${dinero(producto.precioUnitario)} ${producto.moneda}\n" +
+"Subtotal: ${dinero(producto.subtotal)} ${producto.moneda}"
                     textSize = 15f
                     setPadding(0, dp(6), 0, dp(6))
                 })
