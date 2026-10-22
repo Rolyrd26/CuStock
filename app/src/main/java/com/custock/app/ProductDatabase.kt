@@ -712,6 +712,7 @@ moneda TEXT NOT NULL DEFAULT 'CUP'
                     "Pago del fiado #$ventaPago"
                 )
                 put("fecha", System.currentTimeMillis())
+                put("moneda", monedaPago)
             }
 
             db.insertOrThrow(
