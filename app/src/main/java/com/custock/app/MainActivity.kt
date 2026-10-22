@@ -959,7 +959,7 @@ totalTexto.text = "TOTAL: ${dinero(total)} $monedaCarrito"
                 AlertDialog.Builder(this)
                     .setTitle(if (esFiado) "Confirmar fiado" else "Confirmar venta")
                     .setMessage(
-                        "Total: ${dinero(carrito.sumOf { it.cantidad * it.precioUnitario })} CUP\n\n" +
+                        "Total: ${dinero(carrito.sumOf { it.cantidad * it.precioUnitario })} ${baseDatos.obtenerProducto(carrito.first().productoId)?.moneda ?: "CUP"}\n\n" +
                             if (esFiado) "Se creará una deuda independiente para ${cliente.text}."
                             else "Se descontarán las existencias del inventario."
                     )
