@@ -971,7 +971,10 @@ totalTexto.text = "TOTAL: ${dinero(total)} $monedaCarrito"
                                 cliente = cliente.text.toString().trim(),
                                 esFiado = esFiado
                             )
-                            aviso("Venta registrada. Total: ${dinero(resultado.total)} CUP")
+                            aviso(
+    "Venta registrada. Total: ${dinero(resultado.total)} " +
+        (baseDatos.obtenerProducto(carrito.first().productoId)?.moneda ?: "CUP")
+)
                             construirPantalla()
                         } catch (e: Exception) {
                             aviso(
