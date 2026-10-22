@@ -116,52 +116,88 @@ private val NOMBRE_BASE_DATOS = "custock.db"
 
 
     private fun agregarCabecera(raiz: LinearLayout, titulo: String, subtitulo: String) {
-        val cabecera = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER_VERTICAL
-            setPadding(dp(24), dp(26), dp(24), dp(26))
-            background = GradientDrawable(
-                GradientDrawable.Orientation.TL_BR,
-                if (temaOscuro) {
-                    intArrayOf(
-                        Color.rgb(35, 45, 60),
-                        Color.rgb(24, 65, 120)
-                    )
-                } else {
-                    intArrayOf(
-                        Color.rgb(24, 65, 120),
-                        Color.rgb(45, 115, 190)
-                    )
-                }
-            ).apply {
-                cornerRadius = dp(20).toFloat()
+    
+private fun agregarCabecera(raiz: LinearLayout, titulo: String, subtitulo: String) {
+    val cabecera = LinearLayout(this).apply {
+        orientation = LinearLayout.VERTICAL
+        gravity = Gravity.CENTER_VERTICAL
+        setPadding(dp(24), dp(22), dp(16), dp(22))
+        background = GradientDrawable(
+            GradientDrawable.Orientation.TL_BR,
+            if (temaOscuro) {
+                intArrayOf(
+                    Color.rgb(35, 45, 60),
+                    Color.rgb(24, 65, 120)
+                )
+            } else {
+                intArrayOf(
+                    Color.rgb(24, 65, 120),
+                    Color.rgb(45, 115, 190)
+                )
             }
-            elevation = dp(3).toFloat()
-        }
-
-        cabecera.addView(TextView(this).apply {
-            text = "📦  $titulo"
-            textSize = 28f
-            typeface = Typeface.DEFAULT_BOLD
-            setTextColor(Color.WHITE)
-        })
-
-        cabecera.addView(TextView(this).apply {
-            text = subtitulo
-            textSize = 14f
-            setTextColor(Color.rgb(230, 238, 250))
-            setPadding(0, dp(5), 0, 0)
-        })
-
-        val parametros = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
         ).apply {
-            setMargins(dp(12), dp(12), dp(12), dp(4))
+            cornerRadius = dp(22).toFloat()
         }
-
-        raiz.addView(cabecera, parametros)
+        elevation = dp(4).toFloat()
     }
+
+    val fila = LinearLayout(this).apply {
+        orientation = LinearLayout.HORIZONTAL
+        gravity = Gravity.CENTER_VERTICAL
+    }
+
+    val textos = LinearLayout(this).apply {
+        orientation = LinearLayout.VERTICAL
+        gravity = Gravity.CENTER_VERTICAL
+    }
+
+    textos.addView(TextView(this).apply {
+        text = "📦  $titulo"
+        textSize = 28f
+        typeface = Typeface.DEFAULT_BOLD
+        setTextColor(Color.WHITE)
+        maxLines = 1
+    })
+
+    textos.addView(TextView(this).apply {
+        text = subtitulo
+        textSize = 14f
+        setTextColor(Color.rgb(230, 238, 250))
+        setPadding(0, dp(5), 0, 0)
+    })
+
+    fila.addView(
+        textos,
+        LinearLayout.LayoutParams(0, -2, 1f)
+    )
+
+    if (titulo == "CuStock") {
+        fila.addView(TextView(this).apply {
+            text = "☰"
+            textSize = 28f
+            gravity = Gravity.CENTER
+            setTextColor(Color.WHITE)
+            isClickable = true
+            isFocusable = true
+            setPadding(dp(12), dp(8), dp(8), dp(8))
+            setOnClickListener {
+                abrirMenuInferior()
+            }
+        })
+    }
+
+    cabecera.addView(fila)
+
+    val parametros = LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams.MATCH_PARENT,
+        LinearLayout.LayoutParams.WRAP_CONTENT
+    ).apply {
+        setMargins(dp(12), dp(12), dp(12), dp(4))
+    }
+
+    raiz.addView(cabecera, parametros)
+}
+
 
 
     
