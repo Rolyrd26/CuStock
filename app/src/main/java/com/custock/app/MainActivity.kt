@@ -691,10 +691,10 @@ contenido.addView(TextView(this).apply {
             return edit
         }
         val nombre = campo("Nombre del producto", existente?.nombre.orEmpty())
-        val cantidad = campo("Existencias", existente?.cantidad?.toString() ?: "0")
-        cantidad.inputType = InputType.TYPE_CLASS_NUMBER
-        val coste = campo("Precio de coste", existente?.coste?.toString() ?: "0")
-        val venta = campo("Precio de venta", existente?.venta?.toString() ?: "0")
+        val cantidad = campo("Existencias", existente?.cantidad?.toString().orEmpty())
+cantidad.inputType = InputType.TYPE_CLASS_NUMBER
+val coste = campo("Precio de coste", existente?.coste?.toString().orEmpty())
+val venta = campo("Precio de venta", existente?.venta?.toString().orEmpty())
         val referencia = campo("Referencia (opcional)", existente?.referencia.orEmpty())
         val descripcion = campo("Descripción (opcional)", existente?.descripcion.orEmpty())
 val monedas = listOf(
