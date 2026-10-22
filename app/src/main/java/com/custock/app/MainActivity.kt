@@ -773,7 +773,7 @@ moneda = monedas[selectorMoneda.selectedItemPosition].first
     private fun abrirVentas() {
         val carrito = mutableListOf<LineaVenta>()
         val raiz = nuevaRaiz()
-        agregarCabecera(raiz, "Nueva venta", "Importes en pesos cubanos (CUP)")
+        agregarCabecera(raiz, "Nueva venta", "La moneda depende del producto seleccionado")
         val contenido = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(16), dp(10), dp(16), dp(16))
