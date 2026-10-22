@@ -1828,12 +1828,14 @@ val fiadosPorMoneda = baseDatos.listarFiados("", true)
                 text = "Venta #${venta.id} — ${fechaHora(venta.fecha)}\n" +
                     "Cliente: ${venta.cliente.ifBlank { "Sin nombre" }}\n" +
                     "Tipo: ${if (venta.esFiado) "Fiada" else "Pagada"}\n" +
-                    "Total: ${dinero(venta.total)} CUP\n" +
-                    venta.lineas.joinToString("\n") { linea ->
-                        "• ${linea.nombre}: ${linea.cantidad} × " +
-                            "${dinero(linea.precioUnitario)} CUP = " +
-                            "${dinero(linea.subtotal)} CUP"
-                    }
+                    
+"Total: ${dinero(venta.total)} ${venta.moneda}\n" +
+venta.lineas.joinToString("\n") { linea ->
+    "• ${linea.nombre}: ${linea.cantidad} × " +
+        "${dinero(linea.precioUnitario)} ${linea.moneda} = " +
+        "${dinero(linea.subtotal)} ${linea.moneda}"
+}
+
                 textSize = 15f
                 setTextColor(if (temaOscuro) Color.WHITE else Color.DKGRAY)
                 setPadding(dp(10), dp(10), dp(10), dp(10))
