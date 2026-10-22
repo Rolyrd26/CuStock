@@ -1125,7 +1125,7 @@ totalTexto.text = "TOTAL: ${dinero(total)} $monedaCarrito"
             pagos.forEach { pago ->
                 contenido.addView(TextView(this).apply {
                     text = "${fechaHora(pago.fecha)} — " +
-                        "${dinero(pago.importe)} CUP"
+    "${dinero(pago.importe)} ${pago.moneda}"
                     textSize = 14f
                     setPadding(0, dp(4), 0, dp(4))
                 })
