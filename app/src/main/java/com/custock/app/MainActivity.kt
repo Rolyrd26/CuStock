@@ -387,7 +387,7 @@ private fun abrirMenuInferior() {
             text = "Categorías e inventario"
             textSize = 22f
             typeface = Typeface.DEFAULT_BOLD
-            setTextColor(azul)
+            setTextColor(if (temaOscuro) Color.WHITE else azul)
         }, LinearLayout.LayoutParams(0, -2, 1f))
         
         filaTitulo.addView(Button(this).apply {
