@@ -197,7 +197,8 @@ private val NOMBRE_BASE_DATOS = "custock.db"
             setBackgroundColor(fondo)
         }
 
-    private fun construirPantalla() {
+    private fun construirPantalla()
+    ocultarBarrasSistema(){
         val raiz = nuevaRaiz()
         agregarCabecera(raiz, "CuStock", "Tu inventario, siempre contigo")
         val desplazable = ScrollView(this)
