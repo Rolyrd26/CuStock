@@ -528,7 +528,24 @@ private fun abrirMenuInferior() {
                 else "Tema claro activado"
             )
         }
+contenido.addView(TextView(this).apply {
+    text = "ACERCA DE CUSTOCK"
+    textSize = 14f
+    typeface = Typeface.DEFAULT_BOLD
+    setTextColor(azul)
+    setPadding(dp(4), dp(24), 0, dp(10))
+})
 
+contenido.addView(TextView(this).apply {
+    text = "CuStock\nDesarrollado por Rolando Rodriguez Diaz"
+    textSize = 16f
+    setTextColor(if (temaOscuro) Color.WHITE else Color.rgb(50, 60, 75))
+    setPadding(dp(14), dp(14), dp(14), dp(14))
+    background = fondoRedondeado(
+        if (temaOscuro) Color.rgb(42, 49, 60)
+        else Color.WHITE
+    )
+})
         val desplazable = ScrollView(this).apply {
             addView(contenido)
         }
