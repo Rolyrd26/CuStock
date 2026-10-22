@@ -1592,9 +1592,18 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
         ventas.forEach { venta ->
             val hora = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(venta.fecha))
             parrafos.add("Venta #${venta.id} — $hora — Cliente: ${venta.cliente.ifBlank { "Sin nombre" }}" to true)
-            parrafos.add("Tipo: ${if (venta.esFiado) "Fiada" else "Pagada"} — Total: ${dinero(venta.total)} CUP" to false)
-            venta.lineas.forEach { linea ->
-                parrafos.add("  • ${linea.nombre}: ${linea.cantidad} × ${dinero(linea.precioUnitario)} CUP = ${dinero(linea.subtotal)} CUP" to false)
+            
+parrafos.add(
+    "Tipo: ${if (venta.esFiado) "Fiada" else "Pagada"} — " +
+        "Total: ${dinero(venta.total)} ${venta.moneda}" to false
+)
+venta.lineas.forEach { linea ->
+    parrafos.add(
+        "  • ${linea.nombre}: ${linea.cantidad} × " +
+            "${dinero(linea.precioUnitario)} ${linea.moneda} = " +
+            "${dinero(linea.subtotal)} ${linea.moneda}" to false
+    )
+}
             }
             parrafos.add("" to false)
         }
