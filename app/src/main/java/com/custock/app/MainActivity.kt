@@ -225,19 +225,83 @@ private fun abrirMenuInferior() {
         setPadding(0, 0, 0, dp(12))
     })
 
+
     val opciones = listOf(
-        "🛒  Nueva venta" to { abrirVentas() },
-        "📒  Control de fiados" to { abrirFiados() },
-        "📜  Historial de movimientos" to { abrirHistorialMovimientos() },
-        "📊  Informes y ganancias" to { abrirInformes() },
-        "⚙️  Ajustes" to { abrirAjustes() }
+        Triple("🛒", "Nueva venta", { abrirVentas() }),
+        Triple("📒", "Control de fiados", { abrirFiados() }),
+        Triple("📜", "Historial de movimientos", { abrirHistorialMovimientos() }),
+        Triple("📊", "Informes y ganancias", { abrirInformes() }),
+        Triple("⚙️", "Ajustes", { abrirAjustes() })
     )
 
-    opciones.forEach { (texto, accion) ->
-        agregarBoton(panel, texto) {
-            dialogo.dismiss()
-            accion()
+    val cuadrícula = GridLayout(this).apply {
+        columnCount = 2
+        useDefaultMargins = false
+    }
+
+    opciones.forEach { (icono, texto, accion) ->
+        val tarjeta = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            setPadding(dp(8), dp(16), dp(8), dp(16))
+            background = GradientDrawable().apply {
+                setColor(
+                    if (temaOscuro) Color.rgb(42, 50, 63)
+                    else when (texto) {
+                        "Nueva venta" -> Color.rgb(220, 235, 255)
+                        "Control de fiados" -> Color.rgb(255, 231, 204)
+                        "Historial de movimientos" -> Color.rgb(215, 245, 239)
+                        "Informes y ganancias" -> Color.rgb(231, 222, 255)
+                        else -> Color.rgb(220, 235, 255)
+                    }
+                )
+                cornerRadius = dp(16).toFloat()
+            }
+            isClickable = true
+            isFocusable = true
+            setOnClickListener {
+                dialogo.dismiss()
+                accion()
+            }
         }
+
+        tarjeta.addView(TextView(this).apply {
+            text = icono
+            textSize = 30f
+            gravity = Gravity.CENTER
+        })
+
+        tarjeta.addView(TextView(this).apply {
+            text = texto
+            textSize = 14f
+            typeface = Typeface.DEFAULT_BOLD
+            gravity = Gravity.CENTER
+            setTextColor(
+                if (temaOscuro) Color.WHITE else Color.rgb(24, 65, 120)
+            )
+            setPadding(0, dp(8), 0, 0)
+        })
+
+        val parametrosTarjeta = GridLayout.LayoutParams().apply {
+            width = 0
+            height = dp(112)
+            columnSpec = GridLayout.spec(
+                GridLayout.UNDEFINED, 1f
+            )
+            setMargins(dp(5), dp(5), dp(5), dp(5))
+        }
+
+        cuadrícula.addView(tarjeta, parametrosTarjeta)
+    }
+
+    panel.addView(
+        cuadrícula,
+        LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+    )
+
     }
 
     dialogo.setContentView(panel)
