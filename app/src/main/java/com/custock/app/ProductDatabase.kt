@@ -77,7 +77,8 @@ data class Movimiento(
     val cantidad: Int,
     val importe: Double,
     val detalle: String,
-    val fecha: Long
+    val fecha: Long,
+    val moneda: String = "CUP"
 )
 class ProductDatabase(context: Context) :
     SQLiteOpenHelper(context, "custock.db", null, 5) {
