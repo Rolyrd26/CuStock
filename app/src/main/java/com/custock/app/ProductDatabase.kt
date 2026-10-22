@@ -614,7 +614,7 @@ val monedaVenta = monedasVenta.first()
             "fiados",
             arrayOf(
                 "id", "venta_id", "cliente", "total",
-                "pagado", "(total - pagado) AS saldo", "fecha"
+                "pagado", "(total - pagado) AS saldo", "fecha", "moneda"
             ),
             condicion,
             arrayOf("%$busquedaCliente%"),
@@ -633,7 +633,8 @@ val monedaVenta = monedasVenta.first()
                         total = it.getDouble(3),
                         pagado = it.getDouble(4),
                         saldo = it.getDouble(5),
-                        fecha = it.getLong(6)
+                        fecha = it.getLong(6),
+                        moneda = it.getString(7)
                     )
                 )
             }
