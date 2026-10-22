@@ -1881,9 +1881,11 @@ venta.lineas.joinToString("\n") { linea ->
             }
 
             contenido.addView(TextView(this).apply {
-                text = "${fechaHora(pago.fecha)} — ${pago.cliente}\n" +
-                    "Fiado #${pago.fiadoId}: ${dinero(pago.importe)} CUP\n" +
-                    textoProductos
+                
+text = "${fechaHora(pago.fecha)} — ${pago.cliente}\n" +
+    "Fiado #${pago.fiadoId}: ${dinero(pago.importe)} ${pago.moneda}\n" +
+    textoProductos
+
                 textSize = 15f
                 setTextColor(if (temaOscuro) Color.WHITE else Color.DKGRAY)
                 setPadding(dp(10), dp(10), dp(10), dp(10))
