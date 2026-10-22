@@ -1161,12 +1161,11 @@ totalTexto.text = "TOTAL: ${dinero(total)} $monedaCarrito"
     private fun pedirPago(fiadoId: Long) {
         val fiado = baseDatos.listarFiados("", false).firstOrNull { it.id == fiadoId } ?: return
         val campo = EditText(this).apply {
-            hint = "Importe del pago en CUP"
-            inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-        }
+            hint = "Importe del pago en ${fiado.moneda}"
+inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
         val dialog = AlertDialog.Builder(this).setTitle("Registrar pago")
             .setMessage(
-                "Cliente: ${fiado.cliente}\nSaldo pendiente: ${dinero(fiado.saldo)} CUP\n" +
+                "Cliente: ${fiado.cliente}\nSaldo pendiente: ${dinero(fiado.saldo)} ${fiado.moneda}\n" +
                     "Puedes pagar cualquier cantidad hasta el saldo pendiente."
             ).setView(campo).setNegativeButton("Cancelar", null)
             .setPositiveButton("Guardar pago", null).create()
