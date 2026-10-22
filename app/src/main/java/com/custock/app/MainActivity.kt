@@ -908,7 +908,8 @@ moneda = monedas[selectorMoneda.selectedItemPosition].first
 
 
                     tarjeta.addView(TextView(this).apply {
-                        text = "${linea.cantidad} × ${dinero(linea.precioUnitario)} CUP\nSubtotal: ${dinero(subtotal)} CUP"
+                        text = "${linea.cantidad} × ${dinero(linea.precioUnitario)} ${producto.moneda}\n" +
+    "Subtotal: ${dinero(subtotal)} ${producto.moneda}"
                         textSize = 14f
                         setTextColor(if (temaOscuro) Color.WHITE else Color.DKGRAY)
                         setPadding(0, dp(6), 0, dp(8))
