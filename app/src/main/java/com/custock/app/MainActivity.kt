@@ -102,7 +102,12 @@ private val NOMBRE_BASE_DATOS = "custock.db"
             or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
         )
     }
-
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            ocultarBarrasSistema()
+        }
+    }
     private fun guardarCategorias() {
         val json = org.json.JSONArray()
         categorias.forEach { json.put(it) }
