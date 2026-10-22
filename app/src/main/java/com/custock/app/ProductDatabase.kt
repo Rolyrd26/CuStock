@@ -508,6 +508,7 @@ val monedaVenta = monedasVenta.first()
                 put("fecha", fecha)
                 put("total", total)
                 put("es_fiado", if (esFiado) 1 else 0)
+                put("moneda", monedaVenta)
             }
 
             val ventaId = db.insertOrThrow(
