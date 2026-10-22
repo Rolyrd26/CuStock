@@ -818,8 +818,8 @@ moneda = monedas[selectorMoneda.selectedItemPosition].first
             if (disponibles.isEmpty()) aviso("No hay productos con existencias disponibles.")
             else {
                 val opciones = disponibles.map {
-                    "${it.nombre} — ${dinero(it.venta)} CUP (stock: ${it.cantidad})"
-                }.toTypedArray()
+    "${it.nombre} — ${dinero(it.venta)} ${it.moneda} (stock: ${it.cantidad})"
+}.toTypedArray()
                 AlertDialog.Builder(this).setTitle("Selecciona un producto")
                     .setItems(opciones) { _, indice ->
                         val producto = disponibles[indice]
