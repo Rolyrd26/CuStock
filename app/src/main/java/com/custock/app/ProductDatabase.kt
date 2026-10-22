@@ -834,8 +834,8 @@ fun ventasDelPeriodo(
             val lineas = mutableListOf<LineaDocumento>()
 
             val detalle = readableDatabase.rawQuery(
-                "SELECT nombre_producto, cantidad, precio_unitario, subtotal " +
-                    "FROM detalle_ventas WHERE venta_id = ? ORDER BY id ASC",
+                "SELECT nombre_producto, cantidad, precio_unitario, subtotal, moneda " +
+    "FROM detalle_ventas WHERE venta_id = ? ORDER BY id ASC",
                 arrayOf(ventaId.toString())
             )
 
@@ -846,7 +846,8 @@ fun ventasDelPeriodo(
                             nombre = d.getString(0),
                             cantidad = d.getInt(1),
                             precioUnitario = d.getDouble(2),
-                            subtotal = d.getDouble(3)
+                            subtotal = d.getDouble(3),
+                            moneda = d.getString(4)
                         )
                     )
                 }
