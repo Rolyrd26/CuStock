@@ -13,10 +13,63 @@ import com.custock.app.dp
 
 class SettingsScreen(
     private val context: Context,
-    private val prefs: SharedPreferences
+    private val prefs: SharedPreferences,
+    private val onBack: () -> Unit
 ) {
     fun buildView(): LinearLayout {
         val raiz = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundColor(Color.rgb(245, 248, 253))
+        }
+
+        val cabecera = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(context.dp(24), context.dp(34), context.dp(16), context.dp(28))
+            background = android.graphics.drawable.GradientDrawable(
+                android.graphics.drawable.GradientDrawable.Orientation.TL_BR,
+                intArrayOf(Color.rgb(24, 65, 120), Color.rgb(45, 115, 190))
+            )
+        }
+
+        val fila = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+
+        val textos = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+
+        textos.addView(TextView(context).apply {
+            text = "⚙️ Ajustes"
+            textSize = 28f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(Color.WHITE)
+        })
+
+        textos.addView(TextView(context).apply {
+            text = "Personaliza CuStock"
+            textSize = 14f
+            setTextColor(Color.rgb(230, 238, 250))
+            setPadding(0, context.dp(5), 0, 0)
+        })
+
+        fila.addView(textos, LinearLayout.LayoutParams(0, -2, 1f))
+
+        fila.addView(TextView(context).apply {
+            text = "←"
+            textSize = 30f
+            setTextColor(Color.WHITE)
+            gravity = Gravity.CENTER
+            setPadding(context.dp(12), context.dp(8), context.dp(8), context.dp(8))
+            setOnClickListener { onBack() }
+        })
+
+        cabecera.addView(fila)
+        raiz.addView(cabecera)
+
+        val contenido = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(context.dp(18), context.dp(20), context.dp(18), context.dp(20))
         }
@@ -24,10 +77,8 @@ class SettingsScreen(
         val btnTema = Button(context).apply {
             text = "Activar tema oscuro"
             setOnClickListener {
-                val editor = prefs.edit()
                 val actual = prefs.getBoolean(AppConstants.KEY_TEMA_OSCURO, false)
-                editor.putBoolean(AppConstants.KEY_TEMA_OSCURO, !actual)
-                editor.apply()
+                prefs.edit().putBoolean(AppConstants.KEY_TEMA_OSCURO, !actual).apply()
             }
         }
 
@@ -36,22 +87,16 @@ class SettingsScreen(
             setOnClickListener {
                 AlertDialog.Builder(context)
                     .setTitle("Copias de seguridad")
-                    .setMessage("Funcionalidad pendiente de mover a backup manager.")
+                    .setMessage("Funcionalidad pendiente: exportación o restauración de la base de datos.")
                     .setPositiveButton("Aceptar", null)
                     .show()
             }
         }
 
-        raiz.addView(TextView(context).apply {
-            text = "Ajustes"
-            textSize = 22f
-            typeface = Typeface.DEFAULT_BOLD
-            setTextColor(Color.rgb(24, 65, 120))
-        })
+        contenido.addView(btnTema)
+        contenido.addView(btnCopia)
 
-        raiz.addView(btnTema)
-        raiz.addView(btnCopia)
-
+        raiz.addView(contenido)
         return raiz
     }
 }
