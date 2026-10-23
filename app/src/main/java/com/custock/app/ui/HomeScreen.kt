@@ -209,7 +209,7 @@ class HomeScreen(
 
         contenido.addView(grid)
         desplazable.addView(contenido)
-        raiz.addView(desplable, LinearLayout.LayoutParams(-1, 0, 1f))
+        raiz.addView(desplazable, LinearLayout.LayoutParams(-1, 0, 1f))
 
         return raiz
     }
