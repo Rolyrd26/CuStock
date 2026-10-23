@@ -199,15 +199,10 @@ class CategoryScreen(
             override fun afterTextChanged(s: android.text.Editable?) {}
         })
 
-        val dialog = AlertDialog.Builder(context)
-            .setTitle("${icono(categoria)} $categoria")
-            .setView(raiz)
-            .setPositiveButton("Añadir producto", null)
-            .setNegativeButton("Cerrar", null)
-            .create()
-
-        dialog.setOnShowListener {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+        
+        val btnAgregarProducto = Button(context).apply {
+            text = "＋ Añadir producto"
+            setOnClickListener {
                 ProductFormDialog(
                     context = context,
                     categoria = categoria,
@@ -219,10 +214,11 @@ class CategoryScreen(
             }
         }
 
+        contenido.addView(btnAgregarProducto)
         raiz.addView(contenido)
-        dialog.show()
         actualizarLista()
 
         return raiz
+
     }
 }
