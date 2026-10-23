@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-import android.text.InputType
 import android.view.Gravity
 import android.widget.Button
 import android.widget.EditText
