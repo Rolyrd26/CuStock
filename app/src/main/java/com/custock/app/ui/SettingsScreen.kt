@@ -26,7 +26,12 @@ class SettingsScreen(
     fun buildView(): LinearLayout {
         val raiz = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setBackgroundColor(Color.rgb(245, 248, 253))
+            setBackgroundColor(
+    if (prefs.getBoolean(AppConstants.KEY_TEMA_OSCURO, false))
+        Color.rgb(18, 18, 18)
+    else
+        Color.rgb(245, 248, 253)
+)
         }
 
         val cabecera = LinearLayout(context).apply {
