@@ -28,7 +28,11 @@ val texto = if (primary) Color.WHITE else if (oscuro) Color.WHITE else Color.rgb
         cornerRadius = context.dp(14).toFloat()
         setColor(fondo)
         if (!primary) {
-            setStroke(context.dp(1), Color.rgb(210, 224, 240))
+    setStroke(
+        context.dp(1),
+        if (oscuro) Color.rgb(70, 70, 70)
+        else Color.rgb(210, 224, 240)
+    )
         }
     }
 
