@@ -557,7 +557,7 @@ val monedaVenta = monedasVenta.first()
                     "detalle_ventas", null, detalleValores
                 )                
                 val movimientoValores = ContentValues().apply {
-                    put("tipo", "VENTA")
+                    put("tipo", if (esFiado) "VENTA_FIADA" else "VENTA")
                     put("producto_id", producto.id)
                     put("nombre_producto", producto.nombre)
                     put("cantidad", linea.cantidad)
