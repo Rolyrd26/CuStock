@@ -248,10 +248,27 @@ class DebtsScreen(
                     }
                 }
 
+                
                 if (fiado.saldo > 0.009) {
                     tarjeta.addView(Button(context).apply {
-                        text = "Registrar pago"
+                        text = "＋ Registrar pago"
                         isAllCaps = false
+                        textSize = 16f
+                        typeface = Typeface.DEFAULT_BOLD
+                        setTextColor(Color.WHITE)
+                        background = android.graphics.drawable.GradientDrawable().apply {
+                            setColor(Color.rgb(24, 65, 120))
+                            cornerRadius = context.dp(12).toFloat()
+                        }
+                        setPadding(
+                            context.dp(18),
+                            context.dp(12),
+                            context.dp(18),
+                            context.dp(12)
+                        )
+                        minHeight = context.dp(48)
+                        elevation = context.dp(2).toFloat()
+
                         setOnClickListener {
                             val campo = EditText(context).apply {
                                 hint = "Importe"
