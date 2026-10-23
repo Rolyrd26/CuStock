@@ -178,7 +178,7 @@ class ReportsScreen(
                         append("  Subtotal: ${dinero(linea.subtotal)} ${linea.moneda}\n\n")
                     }
 
-                    append("TOTAL: ${dinero(venta.total)}")
+                    append("TOTAL: ${dinero(venta.total)} ${venta.lineas.firstOrNull()?.moneda ?: ""}")
                 }
 
                 cuerpo.addView(TextView(context).apply {
