@@ -8,14 +8,21 @@ import android.graphics.Typeface
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.custock.app.AppConstants
+import com.custock.app.database.BackupManager
 import com.custock.app.dp
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class SettingsScreen(
     private val context: Context,
     private val prefs: SharedPreferences,
     private val onBack: () -> Unit
 ) {
+
     fun buildView(): LinearLayout {
         val raiz = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -74,27 +81,54 @@ class SettingsScreen(
             setPadding(context.dp(18), context.dp(20), context.dp(18), context.dp(20))
         }
 
+        val backupManager = BackupManager(context)
+
         val btnTema = Button(context).apply {
             text = "Activar tema oscuro"
             setOnClickListener {
                 val actual = prefs.getBoolean(AppConstants.KEY_TEMA_OSCURO, false)
                 prefs.edit().putBoolean(AppConstants.KEY_TEMA_OSCURO, !actual).apply()
+                Toast.makeText(context, "Tema actualizado.", Toast.LENGTH_SHORT).show()
             }
         }
 
         val btnCopia = Button(context).apply {
-            text = "Copias de seguridad"
+            text = "Crear copia de seguridad"
             setOnClickListener {
-                AlertDialog.Builder(context)
-                    .setTitle("Copias de seguridad")
-                    .setMessage("Funcionalidad pendiente: exportación o restauración de la base de datos.")
-                    .setPositiveButton("Aceptar", null)
-                    .show()
+                try {
+                    val fecha = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                    val archivo = backupManager.createBackupFile("custock_backup_$fecha.db")
+                    backupManager.exportDatabase(archivo)
+                    Toast.makeText(context, "Copia creada en: ${archivo.absolutePath}", Toast.LENGTH_LONG).show()
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Error al crear la copia: ${e.message ?: "desconocido"}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        val btnRestaurar = Button(context).apply {
+            text = "Restaurar copia de seguridad"
+            setOnClickListener {
+                try {
+                    val dir = backupManager.getBackupDir()
+                    val archivos = dir.listFiles()?.filter { it.isFile && it.name.endsWith(".db") } ?: emptyList()
+                    if (archivos.isEmpty()) {
+                        Toast.makeText(context, "No hay copias de seguridad disponibles.", Toast.LENGTH_LONG).show()
+                        return@setOnClickListener
+                    }
+
+                    val archivo = archivos.last()
+                    backupManager.restoreDatabase(archivo)
+                    Toast.makeText(context, "Base de datos restaurada desde: ${archivo.absolutePath}", Toast.LENGTH_LONG).show()
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Error al restaurar: ${e.message ?: "desconocido"}", Toast.LENGTH_LONG).show()
+                }
             }
         }
 
         contenido.addView(btnTema)
         contenido.addView(btnCopia)
+        contenido.addView(btnRestaurar)
 
         raiz.addView(contenido)
         return raiz
