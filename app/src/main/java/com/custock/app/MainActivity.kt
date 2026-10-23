@@ -5,7 +5,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.custock.app.database.ProductDatabase
 import com.custock.app.ui.CategoryScreen
+import com.custock.app.ui.DebtsScreen
 import com.custock.app.ui.HomeScreen
+import com.custock.app.ui.ReportsScreen
 import com.custock.app.ui.SalesScreen
 import com.custock.app.ui.SettingsScreen
 
@@ -89,10 +91,35 @@ class MainActivity : AppCompatActivity() {
         setContentView(screen.buildView())
     }
 
+    private fun mostrarFiados() {
+        val screen = DebtsScreen(
+            context = this,
+            db = db,
+            onBack = {
+                mostrarHome()
+            }
+        )
+        setContentView(screen.buildView())
+    }
+
+    private fun mostrarInformes() {
+        val screen = ReportsScreen(
+            context = this,
+            db = db,
+            onBack = {
+                mostrarHome()
+            }
+        )
+        setContentView(screen.buildView())
+    }
+
     private fun mostrarAjustes() {
         val screen = SettingsScreen(
             context = this,
-            prefs = prefs
+            prefs = prefs,
+            onBack = {
+                mostrarHome()
+            }
         )
         setContentView(screen.buildView())
     }
