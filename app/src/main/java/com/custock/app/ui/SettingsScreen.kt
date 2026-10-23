@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Typeface
+import android.view.Gravity
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -12,7 +13,6 @@ import android.widget.Toast
 import com.custock.app.AppConstants
 import com.custock.app.database.BackupManager
 import com.custock.app.dp
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -22,7 +22,6 @@ class SettingsScreen(
     private val prefs: SharedPreferences,
     private val onBack: () -> Unit
 ) {
-
     fun buildView(): LinearLayout {
         val raiz = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
