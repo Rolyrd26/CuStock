@@ -85,9 +85,8 @@ class ReportsScreen(
         val desde = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000)
         val hasta = System.currentTimeMillis()
 
-        val totalVentas = db.totalVentas(desde, hasta)
-        val ganancia = db.gananciaRegistrada(desde, hasta)
-        val porMoneda = db.totalVentasPorMoneda(desde, hasta)
+                val ventasPorMoneda = db.totalVentasPorMoneda(desde, hasta)
+        val gananciasPorMoneda = db.gananciaPorMoneda(desde, hasta)
 
         cuerpo.addView(TextView(context).apply {
             text = "Resumen del último mes"
@@ -97,31 +96,53 @@ class ReportsScreen(
         })
 
         cuerpo.addView(TextView(context).apply {
-            text = "Ventas: ${dinero(totalVentas)} CUP"
-            textSize = 16f
-            setTextColor(Color.DKGRAY)
-            gravity = Gravity.START
-            setPadding(0, context.dp(10), 0, context.dp(10))
+            text = "Ventas por moneda"
+            textSize = 17f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(Color.rgb(24, 65, 120))
+            setPadding(0, context.dp(12), 0, context.dp(4))
         })
 
-        cuerpo.addView(TextView(context).apply {
-            text = "Ganancia: ${dinero(ganancia)} CUP"
-            textSize = 16f
-            setTextColor(Color.DKGRAY)
-            gravity = Gravity.START
-            setPadding(0, context.dp(10), 0, context.dp(10))
-        })
-
-        val resumenMoneda = "Resumen por moneda:\n" + porMoneda.entries.joinToString(separator = "\n") {
-            "${it.key}: ${dinero(it.value)}"
+        val resumenVentas = if (ventasPorMoneda.isEmpty()) {
+            "No hay ventas registradas."
+        } else {
+            ventasPorMoneda.entries
+                .sortedBy { it.key }
+                .joinToString(separator = "\n") {
+                    "${it.key}: ${dinero(it.value)} ${it.key}"
+                }
         }
 
         cuerpo.addView(TextView(context).apply {
-            text = resumenMoneda
-            textSize = 15f
+            text = resumenVentas
+            textSize = 16f
             setTextColor(Color.DKGRAY)
-            gravity = Gravity.START
-            setPadding(0, context.dp(10), 0, context.dp(10))
+            setPadding(0, context.dp(4), 0, context.dp(10))
+        })
+
+        cuerpo.addView(TextView(context).apply {
+            text = "Ganancias por moneda"
+            textSize = 17f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(Color.rgb(24, 65, 120))
+            setPadding(0, context.dp(8), 0, context.dp(4))
+        })
+
+        val resumenGanancias = if (gananciasPorMoneda.isEmpty()) {
+            "No hay ganancias registradas."
+        } else {
+            gananciasPorMoneda.entries
+                .sortedBy { it.key }
+                .joinToString(separator = "\n") {
+                    "${it.key}: ${dinero(it.value)} ${it.key}"
+                }
+        }
+
+        cuerpo.addView(TextView(context).apply {
+            text = resumenGanancias
+            textSize = 16f
+            setTextColor(Color.DKGRAY)
+            setPadding(0, context.dp(4), 0, context.dp(10))
         })
 
         cuerpo.addView(TextView(context).apply {
