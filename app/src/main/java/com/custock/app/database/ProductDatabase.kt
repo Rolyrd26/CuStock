@@ -646,6 +646,30 @@ class ProductDatabase(context: Context) :
 
         return totales
     }
+    
+    fun gananciaPorMoneda(desde: Long, hasta: Long): Map<String, Double> {
+        val ganancias = mutableMapOf<String, Double>()
+        val cursor = readableDatabase.rawQuery(
+            """
+            SELECT dv.moneda,
+                   COALESCE(SUM(dv.cantidad * (dv.precio_unitario - dv.coste_unitario)), 0)
+            FROM detalle_ventas dv
+            INNER JOIN ventas v ON v.id = dv.venta_id
+            WHERE v.fecha >= ? AND v.fecha < ?
+            GROUP BY dv.moneda
+            """.trimIndent(),
+            arrayOf(desde.toString(), hasta.toString())
+        )
+
+        cursor.use {
+            while (it.moveToNext()) {
+                ganancias[it.getString(0)] = it.getDouble(1)
+            }
+        }
+
+        return ganancias
+    }
+
 
     fun gananciaRegistrada(desde: Long, hasta: Long): Double {
         val cursor = readableDatabase.rawQuery(
