@@ -93,6 +93,7 @@ class MainActivity : AppCompatActivity() {
         val screen = SalesScreen(
             context = this,
             db = db,
+            categorias = categorias,
             onBack = {
                 mostrarHome()
             }
