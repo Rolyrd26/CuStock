@@ -262,7 +262,8 @@ class HomeScreen(
                 )
             }
         }
-
+        
+lateinit var menuDialog: AlertDialog
         opciones.forEach { (titulo, accion) ->
             val item = Button(context).apply {
                 text = titulo
@@ -276,14 +277,19 @@ class HomeScreen(
                     setStroke(context.dp(1), Color.rgb(210, 220, 235))
                 }
                 setPadding(context.dp(18), context.dp(14), context.dp(18), context.dp(14))
-                setOnClickListener { accion() }
+                setOnClickListener {
+    menuDialog.dismiss()
+    accion()
+}
             }
             panel.addView(item)
         }
 
-        AlertDialog.Builder(context)
-            .setTitle("Menú de CuStock")
-            .setView(panel)
-            .show()
+        menuDialog = AlertDialog.Builder(context)
+    .setTitle("Menú de CuStock")
+    .setView(panel)
+    .create()
+
+menuDialog.show()
     }
 }
