@@ -56,6 +56,15 @@ class MainActivity : AppCompatActivity() {
             onOpenCategory = { categoria ->
                 mostrarCategoria(categoria)
             },
+            onOpenSales = {
+                mostrarVentas()
+            },
+            onOpenDebts = {
+                mostrarFiados()
+            },
+            onOpenReports = {
+                mostrarInformes()
+            },
             onOpenSettings = {
                 mostrarAjustes()
             },
