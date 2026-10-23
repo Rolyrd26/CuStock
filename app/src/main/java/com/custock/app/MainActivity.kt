@@ -23,6 +23,13 @@ class MainActivity : AppCompatActivity() {
 
         prefs = getSharedPreferences(AppConstants.PREFS_NAME, MODE_PRIVATE)
         db = ProductDatabase(this)
+        if (prefs.getBoolean(AppConstants.KEY_TEMA_OSCURO, false)) {
+    window.statusBarColor = android.graphics.Color.rgb(18, 18, 18)
+    window.navigationBarColor = android.graphics.Color.rgb(18, 18, 18)
+} else {
+    window.statusBarColor = android.graphics.Color.rgb(24, 65, 120)
+    window.navigationBarColor = android.graphics.Color.rgb(24, 65, 120)
+        }
 
         val guardadas = prefs.getString(AppConstants.KEY_CATEGORIAS, null)
         if (guardadas == null) {
