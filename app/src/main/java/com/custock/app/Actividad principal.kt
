@@ -1,0 +1,30 @@
+package com.custock.app
+
+import android.app.Activity
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import com.custock.app.database.ProductDatabase
+import com.custock.app.services.InventoryService
+import com.custock.app.services.SalesService
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var db: ProductDatabase
+    private lateinit var inventoryService: InventoryService
+    private lateinit var salesService: SalesService
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        db = ProductDatabase(this)
+        inventoryService = InventoryService(db)
+        salesService = SalesService(db)
+
+        mostrarHome()
+    }
+
+    private fun mostrarHome() {
+        // Aquí se cargaría HomeScreen
+        // y luego cada pantalla se gestiona por pantalla o fragment
+    }
+}
