@@ -1730,13 +1730,10 @@ val documentoUri = DocumentsContract.createDocument(
         } else {
             movimientos.forEach { movimiento ->
                 val tipoVisible = when (movimiento.tipo) {
-                    "ENTRADA" -> "📥 ENTRADA"
-                    "SALIDA" -> "📤 SALIDA"
-                    "VENTA" -> "🛒 VENTA"
-                    "PAGO_FIADO" -> "💵 PAGO DE FIADO"
-                    else -> movimiento.tipo
+    "VENTA_FIADA" -> "🛒 VENTA FIADA"
+    "VENTA" -> "🛒 VENTA"
+    else -> movimiento.tipo
                 }
-
                 val cantidadTexto =
                     if (movimiento.cantidad > 0) {
                         "\nCantidad: ${movimiento.cantidad}"
