@@ -47,7 +47,7 @@ jobs:
             echo "Falta el secreto KEYSTORE_PASSWORD."
             exit 1
           fi
-          gradle assembleDebug
+          gradle assembleRelease
 
       - name: Verificar firma del APK
         run: |
@@ -59,11 +59,10 @@ jobs:
             echo "No se encontró apksigner."
             exit 1
           fi
-          "$APKSIGNER" verify --verbose --print-certs app/build/outputs/apk/debug/app-debug.apk
+          "$APKSIGNER" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
       - name: Guardar APK
         uses: actions/upload-artifact@v4
         with:
           name: CuStock-APK
-          path: app/build/outputs/apk/debug/*.apk
-          if-no-files-found: error
+          path: app/build/outputs/apk/release/*.apk
