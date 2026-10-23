@@ -177,7 +177,9 @@ private val fondo = if (oscuro) Color.rgb(18, 18, 18) else Color.rgb(245, 248, 2
                 orientation = LinearLayout.VERTICAL
                 gravity = Gravity.CENTER
                 setPadding(context.dp(10), context.dp(16), context.dp(10), context.dp(16))
-                background = context.fondoRedondeado(Color.WHITE)
+                background = context.fondoRedondeado(
+    if (oscuro) Color.rgb(38, 38, 38) else Color.WHITE
+)
                 elevation = context.dp(3).toFloat()
                 isClickable = true
                 isFocusable = true
@@ -197,7 +199,9 @@ private val fondo = if (oscuro) Color.rgb(18, 18, 18) else Color.rgb(245, 248, 2
                 textSize = 16f
                 typeface = Typeface.DEFAULT_BOLD
                 gravity = Gravity.CENTER
-                setTextColor(Color.rgb(35, 48, 70))
+                setTextColor(
+    if (oscuro) Color.WHITE else Color.rgb(35, 48, 70)
+)
                 maxLines = 2
                 setPadding(0, context.dp(12), 0, 0)
             })
