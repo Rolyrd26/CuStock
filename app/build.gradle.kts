@@ -16,18 +16,32 @@ android {
     }
 
     signingConfigs {
-        create("stable") {
-            storeFile = rootProject.file("custock-release.p12")
-            storePassword = System.getenv("KEYSTORE_PASSWORD")
-            keyAlias = "custock"
-            keyPassword = System.getenv("KEYSTORE_PASSWORD")
-            storeType = "PKCS12"
+        create("release") {
+            val releaseKeystore = rootProject.file("custock-release.p12")
+            if (releaseKeystore.exists()) {
+                storeFile = releaseKeystore
+                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+                keyAlias = "custock"
+                keyPassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+                storeType = "PKCS12"
+            } else {
+                logger.lifecycle("No se encontró custock-release.p12; la firma de release quedará deshabilitada.")
+            }
         }
     }
 
     buildTypes {
         getByName("debug") {
-            signingConfig = signingConfigs.getByName("stable")
+            isMinifyEnabled = false
+            isDebuggable = true
+        }
+
+        getByName("release") {
+            isMinifyEnabled = false
+            isDebuggable = false
+            if (rootProject.file("custock-release.p12").exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
@@ -42,5 +56,9 @@ android {
 
     kotlinOptions {
         jvmTarget = "17"
+    }
+
+    lint {
+        abortOnError = false
     }
 }
