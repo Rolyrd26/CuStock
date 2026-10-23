@@ -43,14 +43,69 @@ class CategoryScreen(
     fun buildView(): LinearLayout {
         val raiz = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(context.dp(18), context.dp(10), context.dp(18), context.dp(8))
+            setBackgroundColor(Color.rgb(245, 248, 253))
+        }
+
+        val cabecera = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(context.dp(24), context.dp(34), context.dp(16), context.dp(28))
+            background = android.graphics.drawable.GradientDrawable(
+                android.graphics.drawable.GradientDrawable.Orientation.TL_BR,
+                intArrayOf(Color.rgb(24, 65, 120), Color.rgb(45, 115, 190))
+            )
+        }
+
+        val fila = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+
+        val textos = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+
+        textos.addView(TextView(context).apply {
+            text = "${icono(categoria)} $categoria"
+            textSize = 28f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(Color.WHITE)
+        })
+
+        textos.addView(TextView(context).apply {
+            text = "Inventario y productos"
+            textSize = 14f
+            setTextColor(Color.rgb(230, 238, 250))
+            setPadding(0, context.dp(5), 0, 0)
+        })
+
+        fila.addView(textos, LinearLayout.LayoutParams(0, -2, 1f))
+
+        fila.addView(TextView(context).apply {
+            text = "←"
+            textSize = 30f
+            setTextColor(Color.WHITE)
+            gravity = Gravity.CENTER
+            setPadding(context.dp(12), context.dp(8), context.dp(8), context.dp(8))
+            setOnClickListener { onBack() }
+        })
+
+        cabecera.addView(fila)
+        raiz.addView(cabecera)
+
+        val contenido = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(context.dp(16), context.dp(16), context.dp(16), context.dp(20))
         }
 
         val busqueda = EditText(context).apply {
             hint = "Buscar por nombre o referencia"
             setSingleLine(true)
+            setPadding(context.dp(12), context.dp(10), context.dp(12), context.dp(10))
+            background = context.fondoRedondeado(Color.WHITE)
         }
-        raiz.addView(busqueda)
+
+        contenido.addView(busqueda)
 
         val lista = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -60,7 +115,7 @@ class CategoryScreen(
             addView(lista)
         }
 
-        raiz.addView(scroll, LinearLayout.LayoutParams(-1, context.dp(330)))
+        contenido.addView(scroll, LinearLayout.LayoutParams(-1, 0, 1f))
 
         fun actualizarLista(termino: String = "") {
             lista.removeAllViews()
@@ -68,8 +123,11 @@ class CategoryScreen(
 
             if (productos.isEmpty()) {
                 lista.addView(TextView(context).apply {
-                    text = if (termino.isBlank()) "Todavía no hay productos en esta categoría."
-                    else "No se encontraron productos."
+                    text = if (termino.isBlank()) {
+                        "Todavía no hay productos en esta categoría."
+                    } else {
+                        "No se encontraron productos."
+                    }
                     textSize = 15f
                     setPadding(0, context.dp(15), 0, context.dp(15))
                 })
@@ -103,9 +161,14 @@ class CategoryScreen(
                 tarjeta.addView(Button(context).apply {
                     text = "Editar producto"
                     setOnClickListener {
-                        ProductFormDialog(context, categoria, producto) { _, _ ->
-                            actualizarLista(busqueda.text.toString())
-                        }.show()
+                        ProductFormDialog(
+                            context = context,
+                            categoria = categoria,
+                            existente = producto,
+                            onSave = { _, _ ->
+                                actualizarLista(busqueda.text.toString())
+                            }
+                        ).show()
                     }
                 })
 
@@ -146,12 +209,18 @@ class CategoryScreen(
 
         dialog.setOnShowListener {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                ProductFormDialog(context, categoria, null) { _, _ ->
-                    actualizarLista(busqueda.text.toString())
-                }.show()
+                ProductFormDialog(
+                    context = context,
+                    categoria = categoria,
+                    existente = null,
+                    onSave = { _, _ ->
+                        actualizarLista(busqueda.text.toString())
+                    }
+                ).show()
             }
         }
 
+        raiz.addView(contenido)
         dialog.show()
         actualizarLista()
 
