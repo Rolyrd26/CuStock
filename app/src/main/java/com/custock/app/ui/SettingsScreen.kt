@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.custock.app.AppConstants
+import com.custock.app.applyCuStockStyle
 import com.custock.app.database.BackupManager
 import com.custock.app.dp
 import java.text.SimpleDateFormat
@@ -125,9 +126,13 @@ class SettingsScreen(
             }
         }
 
-        contenido.addView(btnTema)
-        contenido.addView(btnCopia)
-        contenido.addView(btnRestaurar)
+        btnTema.applyCuStockStyle(primary = true)
+btnCopia.applyCuStockStyle(primary = false)
+btnRestaurar.applyCuStockStyle(primary = false)
+
+contenido.addView(btnTema)
+contenido.addView(btnCopia)
+contenido.addView(btnRestaurar)
 
         raiz.addView(contenido)
         return raiz
