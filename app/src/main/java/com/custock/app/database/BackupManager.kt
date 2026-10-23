@@ -4,7 +4,6 @@ import android.content.Context
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.io.IOException
 
 class BackupManager(private val context: Context) {
 
@@ -44,10 +43,6 @@ class BackupManager(private val context: Context) {
         if (parent != null && !parent.exists()) {
             parent.mkdirs()
         }
-
-        // Cerrar base de datos antes de reemplazarla si está abierta
-        val db = context.openOrCreateDatabase(dbName, Context.MODE_PRIVATE, null)
-        db.close()
 
         FileInputStream(sourceFile).use { input ->
             FileOutputStream(destination).use { output ->
