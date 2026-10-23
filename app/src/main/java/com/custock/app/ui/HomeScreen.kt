@@ -265,7 +265,7 @@ private val fondo = if (oscuro) Color.rgb(18, 18, 18) else Color.rgb(245, 248, 2
             orientation = LinearLayout.VERTICAL
             setPadding(context.dp(22), context.dp(12), context.dp(22), context.dp(24))
             background = GradientDrawable().apply {
-                setColor(Color.WHITE)
+                setColor(if (oscuro) Color.rgb(38, 38, 38) else Color.WHITE)
                 cornerRadii = floatArrayOf(
                     context.dp(24).toFloat(), context.dp(24).toFloat(),
                     context.dp(24).toFloat(), context.dp(24).toFloat(),
@@ -283,7 +283,7 @@ lateinit var menuDialog: AlertDialog
                 typeface = Typeface.DEFAULT_BOLD
                 setTextColor(azul)
                 background = GradientDrawable().apply {
-                    setColor(Color.WHITE)
+                    setColor(if (oscuro) Color.rgb(30, 30, 30) else Color.WHITE)
                     cornerRadius = context.dp(12).toFloat()
                     setStroke(context.dp(1), Color.rgb(210, 220, 235))
                 }
