@@ -13,6 +13,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import com.custock.app.LineaVenta
+import com.custock.app.applyCuStockStyle
 import com.custock.app.database.ProductDatabase
 import com.custock.app.dinero
 import com.custock.app.dp
@@ -354,9 +355,13 @@ class SalesScreen(
             setOnClickListener { registrarVenta(true) }
         }
 
-        contenido.addView(btnAgregarProducto)
-        contenido.addView(btnConfirmarPagada)
-        contenido.addView(btnConfirmarFiada)
+        btnAgregarProducto.applyCuStockStyle(primary = false)
+btnConfirmarPagada.applyCuStockStyle(primary = true)
+btnConfirmarFiada.applyCuStockStyle(primary = false)
+
+contenido.addView(btnAgregarProducto)
+contenido.addView(btnConfirmarPagada)
+contenido.addView(btnConfirmarFiada)
         raiz.addView(contenido)
 
         renderizarCarrito()
