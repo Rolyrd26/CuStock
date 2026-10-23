@@ -140,24 +140,44 @@ class DebtsScreen(
                             inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
                         }
 
-                        AlertDialog.Builder(context)
+                        
+                        val dialogPago = AlertDialog.Builder(context)
                             .setTitle("Pago del fiado")
                             .setView(campo)
                             .setNegativeButton("Cancelar", null)
-                            .setPositiveButton("Aceptar") { _, _ ->
-                                val importe = campo.text.toString().replace(',', '.').toDoubleOrNull()
-                                if (importe != null && importe > 0) {
-                                    db.registrarPago(fiado.id, importe)
-                                    renderizar()
-                                } else {
-                                    AlertDialog.Builder(context)
-                                        .setTitle("Importe inválido")
-                                        .setMessage("Debe ser un número mayor que 0.")
-                                        .setPositiveButton("Aceptar", null)
-                                        .show()
+                            .setPositiveButton("Aceptar", null)
+                            .create()
+
+                        dialogPago.setOnShowListener {
+                            dialogPago.getButton(AlertDialog.BUTTON_POSITIVE)
+                                .setOnClickListener {
+                                    val importe = campo.text.toString()
+                                        .replace(',', '.')
+                                        .toDoubleOrNull()
+
+                                    if (importe != null &&
+                                        importe > 0 &&
+                                        importe.isFinite()
+                                    ) {
+                                        try {
+                                            db.registrarPago(fiado.id, importe)
+                                            dialogPago.dismiss()
+                                            renderizar()
+                                        } catch (e: Exception) {
+                                            Toast.makeText(
+                                                context,
+                                                "No se pudo registrar el pago.",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                        }
+                                    } else {
+                                        campo.error = "Introduce un importe válido"
+                                    }
                                 }
-                            }
-                            .show()
+                        }
+
+                        dialogPago.show()
+
                     }
                 })
 
