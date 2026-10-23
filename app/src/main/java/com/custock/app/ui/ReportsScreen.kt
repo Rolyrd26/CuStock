@@ -10,6 +10,9 @@ import android.widget.TextView
 import com.custock.app.database.ProductDatabase
 import com.custock.app.dinero
 import com.custock.app.dp
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class ReportsScreen(
     private val context: Context,
@@ -120,6 +123,64 @@ class ReportsScreen(
             gravity = Gravity.START
             setPadding(0, context.dp(10), 0, context.dp(10))
         })
+
+        cuerpo.addView(TextView(context).apply {
+            text = "Detalle de productos vendidos"
+            textSize = 20f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(Color.rgb(24, 65, 120))
+            setPadding(0, context.dp(20), 0, context.dp(10))
+        })
+
+        val formatoFecha = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        val ventasDetalle = db.ventasDelPeriodo(desde, hasta)
+
+        if (ventasDetalle.isEmpty()) {
+            cuerpo.addView(TextView(context).apply {
+                text = "No hay ventas registradas en los últimos 30 días."
+                textSize = 15f
+                setTextColor(Color.DKGRAY)
+                setPadding(0, context.dp(8), 0, context.dp(12))
+            })
+        } else {
+            ventasDetalle.forEach { venta ->
+                val detalleVenta = buildString {
+                    append("Venta #${venta.id}\n")
+                    append("Fecha: ${formatoFecha.format(Date(venta.fecha))}\n")
+                    append("Cliente: ${venta.cliente.ifBlank { "Cliente general" }}\n")
+                    append("Tipo: ${if (venta.esFiado) "Fiada" else "Pagada"}\n\n")
+
+                    venta.lineas.forEach { linea ->
+                        append("• ${linea.nombre}\n")
+                        append("  Cantidad: ${linea.cantidad}\n")
+                        append("  Precio unitario: ${dinero(linea.precioUnitario)} ${linea.moneda}\n")
+                        append("  Subtotal: ${dinero(linea.subtotal)} ${linea.moneda}\n\n")
+                    }
+
+                    append("TOTAL: ${dinero(venta.total)}")
+                }
+
+                cuerpo.addView(TextView(context).apply {
+                    text = detalleVenta
+                    textSize = 15f
+                    setTextColor(Color.rgb(45, 55, 70))
+                    setPadding(
+                        context.dp(12),
+                        context.dp(12),
+                        context.dp(12),
+                        context.dp(12)
+                    )
+                    background = android.graphics.drawable.GradientDrawable().apply {
+                        cornerRadius = context.dp(12).toFloat()
+                        setColor(Color.rgb(235, 242, 250))
+                    }
+                })
+
+                cuerpo.addView(TextView(context).apply {
+                    height = context.dp(10)
+                })
+            }
+        }
 
         scroll.addView(cuerpo)
         contenido.addView(scroll)
