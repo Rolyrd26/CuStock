@@ -95,7 +95,9 @@ class HomeScreen(
             isClickable = true
             isFocusable = true
             setPadding(context.dp(12), context.dp(8), context.dp(8), context.dp(8))
-            setOnClickListener { mostrarMenu() }
+            setOnClickListener {
+                mostrarMenu()
+            }
         })
 
         cabecera.addView(fila)
@@ -207,7 +209,7 @@ class HomeScreen(
 
         contenido.addView(grid)
         desplazable.addView(contenido)
-        raiz.addView(desplazable, LinearLayout.LayoutParams(-1, 0, 1f))
+        raiz.addView(desplable, LinearLayout.LayoutParams(-1, 0, 1f))
 
         return raiz
     }
@@ -226,10 +228,10 @@ class HomeScreen(
                 val nombre = campo.text.toString().trim()
                 when {
                     nombre.isBlank() -> {
-                        // Puedes mostrar un Toast aquí si quieres.
+                        // mostrar aviso si quieres
                     }
                     categorias.any { it.equals(nombre, true) } -> {
-                        // Puedes mostrar un Toast aquí si quieres.
+                        // mostrar aviso si quieres
                     }
                     else -> {
                         categorias.add(nombre)
