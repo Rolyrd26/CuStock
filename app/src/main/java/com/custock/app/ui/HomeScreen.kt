@@ -154,7 +154,9 @@ private val fondo = if (oscuro) Color.rgb(18, 18, 18) else Color.rgb(245, 248, 2
         contenido.addView(TextView(context).apply {
             text = "Selecciona una categoría para gestionar sus productos."
             textSize = 14f
-            setTextColor(Color.rgb(90, 100, 115))
+            setTextColor(
+    if (oscuro) Color.rgb(200, 200, 200) else Color.rgb(90, 100, 115)
+)
             setPadding(0, context.dp(5), 0, context.dp(12))
         })
 
