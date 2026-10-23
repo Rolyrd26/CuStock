@@ -4,7 +4,9 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.custock.app.database.ProductDatabase
+import com.custock.app.ui.CategoryScreen
 import com.custock.app.ui.HomeScreen
+import com.custock.app.ui.SalesScreen
 import com.custock.app.ui.SettingsScreen
 
 class MainActivity : AppCompatActivity() {
@@ -50,7 +52,7 @@ class MainActivity : AppCompatActivity() {
             context = this,
             categorias = categorias,
             onOpenCategory = { categoria ->
-                // aquí se abriría CategoryScreen más adelante
+                mostrarCategoria(categoria)
             },
             onOpenSettings = {
                 mostrarAjustes()
@@ -61,7 +63,29 @@ class MainActivity : AppCompatActivity() {
                 mostrarHome()
             }
         )
+        setContentView(screen.buildView())
+    }
 
+    private fun mostrarCategoria(categoria: String) {
+        val screen = CategoryScreen(
+            context = this,
+            db = db,
+            categoria = categoria,
+            onBack = {
+                mostrarHome()
+            }
+        )
+        setContentView(screen.buildView())
+    }
+
+    private fun mostrarVentas() {
+        val screen = SalesScreen(
+            context = this,
+            db = db,
+            onBack = {
+                mostrarHome()
+            }
+        )
         setContentView(screen.buildView())
     }
 
