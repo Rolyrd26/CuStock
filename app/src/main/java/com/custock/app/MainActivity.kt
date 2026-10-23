@@ -1,0 +1,75 @@
+package com.custock.app
+
+import android.content.SharedPreferences
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import com.custock.app.database.ProductDatabase
+import com.custock.app.ui.HomeScreen
+import com.custock.app.ui.SettingsScreen
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var prefs: SharedPreferences
+    private lateinit var db: ProductDatabase
+
+    private val categorias = mutableListOf<String>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        prefs = getSharedPreferences(AppConstants.PREFS_NAME, MODE_PRIVATE)
+        db = ProductDatabase(this)
+
+        val guardadas = prefs.getString(AppConstants.KEY_CATEGORIAS, null)
+        if (guardadas == null) {
+            categorias.addAll(AppConstants.DEFAULT_CATEGORIES)
+        } else {
+            val json = org.json.JSONArray(guardadas)
+            for (i in 0 until json.length()) {
+                categorias.add(json.getString(i))
+            }
+            AppConstants.DEFAULT_CATEGORIES.forEach { nombre ->
+                if (categorias.none { it.equals(nombre, true) }) {
+                    categorias.add(nombre)
+                }
+            }
+        }
+
+        guardarCategorias()
+        mostrarHome()
+    }
+
+    private fun guardarCategorias() {
+        val json = org.json.JSONArray()
+        categorias.forEach { json.put(it) }
+        prefs.edit().putString(AppConstants.KEY_CATEGORIAS, json.toString()).apply()
+    }
+
+    private fun mostrarHome() {
+        val screen = HomeScreen(
+            context = this,
+            categorias = categorias,
+            onOpenCategory = { categoria ->
+                // aquí se abriría CategoryScreen más adelante
+            },
+            onOpenSettings = {
+                mostrarAjustes()
+            },
+            onAddCategory = { nombre ->
+                categorias.add(nombre)
+                guardarCategorias()
+                mostrarHome()
+            }
+        )
+
+        setContentView(screen.buildView())
+    }
+
+    private fun mostrarAjustes() {
+        val screen = SettingsScreen(
+            context = this,
+            prefs = prefs
+        )
+        setContentView(screen.buildView())
+    }
+}
