@@ -20,6 +20,9 @@ class HomeScreen(
     private val context: Context,
     private val categorias: MutableList<String>,
     private val onOpenCategory: (String) -> Unit,
+    private val onOpenSales: () -> Unit,
+    private val onOpenDebts: () -> Unit,
+    private val onOpenReports: () -> Unit,
     private val onOpenSettings: () -> Unit,
     private val onAddCategory: (String) -> Unit
 ) {
@@ -92,7 +95,9 @@ class HomeScreen(
             isClickable = true
             isFocusable = true
             setPadding(context.dp(12), context.dp(8), context.dp(8), context.dp(8))
-            setOnClickListener { onOpenSettings() }
+            setOnClickListener {
+                mostrarMenu()
+            }
         })
 
         cabecera.addView(fila)
@@ -204,7 +209,7 @@ class HomeScreen(
 
         contenido.addView(grid)
         desplazable.addView(contenido)
-        raiz.addView(desplazable, LinearLayout.LayoutParams(-1, 0, 1f))
+        raiz.addView(desplable, LinearLayout.LayoutParams(-1, 0, 1f))
 
         return raiz
     }
@@ -223,10 +228,10 @@ class HomeScreen(
                 val nombre = campo.text.toString().trim()
                 when {
                     nombre.isBlank() -> {
-                        // aquí puedes mostrar Toast si quieres
+                        // mostrar aviso si quieres
                     }
                     categorias.any { it.equals(nombre, true) } -> {
-                        // aquí puedes mostrar Toast si quieres
+                        // mostrar aviso si quieres
                     }
                     else -> {
                         categorias.add(nombre)
@@ -234,6 +239,51 @@ class HomeScreen(
                     }
                 }
             }
+            .show()
+    }
+
+    private fun mostrarMenu() {
+        val opciones = listOf(
+            "🛒 Nueva venta" to onOpenSales,
+            "📒 Control de fiados" to onOpenDebts,
+            "📜 Historial" to onOpenReports,
+            "⚙️ Ajustes" to onOpenSettings
+        )
+
+        val panel = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(context.dp(22), context.dp(12), context.dp(22), context.dp(24))
+            background = GradientDrawable().apply {
+                setColor(Color.WHITE)
+                cornerRadii = floatArrayOf(
+                    context.dp(24).toFloat(), context.dp(24).toFloat(),
+                    context.dp(24).toFloat(), context.dp(24).toFloat(),
+                    0f, 0f, 0f, 0f
+                )
+            }
+        }
+
+        opciones.forEach { (titulo, accion) ->
+            val item = Button(context).apply {
+                text = titulo
+                isAllCaps = false
+                textSize = 16f
+                typeface = Typeface.DEFAULT_BOLD
+                setTextColor(azul)
+                background = GradientDrawable().apply {
+                    setColor(Color.WHITE)
+                    cornerRadius = context.dp(12).toFloat()
+                    setStroke(context.dp(1), Color.rgb(210, 220, 235))
+                }
+                setPadding(context.dp(18), context.dp(14), context.dp(18), context.dp(14))
+                setOnClickListener { accion() }
+            }
+            panel.addView(item)
+        }
+
+        AlertDialog.Builder(context)
+            .setTitle("Menú de CuStock")
+            .setView(panel)
             .show()
     }
 }
