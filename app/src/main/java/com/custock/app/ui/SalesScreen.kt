@@ -20,24 +20,81 @@ import com.custock.app.fondoRedondeado
 
 class SalesScreen(
     private val context: Context,
-    private val db: ProductDatabase
+    private val db: ProductDatabase,
+    private val onBack: () -> Unit
 ) {
+
     fun buildView(): LinearLayout {
+        val carrito = mutableListOf<LineaVenta>()
         val raiz = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(Color.rgb(245, 248, 253))
-            setPadding(context.dp(16), context.dp(12), context.dp(16), context.dp(16))
         }
 
-        val carrito = mutableListOf<LineaVenta>()
+        val cabecera = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(context.dp(24), context.dp(34), context.dp(16), context.dp(28))
+            background = android.graphics.drawable.GradientDrawable(
+                android.graphics.drawable.GradientDrawable.Orientation.TL_BR,
+                intArrayOf(Color.rgb(24, 65, 120), Color.rgb(45, 115, 190))
+            )
+        }
+
+        val fila = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+
+        val textos = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+
+        textos.addView(TextView(context).apply {
+            text = "🛒 Nueva venta"
+            textSize = 28f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(Color.WHITE)
+        })
+
+        textos.addView(TextView(context).apply {
+            text = "Carrito y registro de ventas"
+            textSize = 14f
+            setTextColor(Color.rgb(230, 238, 250))
+            setPadding(0, context.dp(5), 0, 0)
+        })
+
+        fila.addView(textos, LinearLayout.LayoutParams(0, -2, 1f))
+
+        fila.addView(TextView(context).apply {
+            text = "←"
+            textSize = 30f
+            setTextColor(Color.WHITE)
+            gravity = Gravity.CENTER
+            setPadding(context.dp(12), context.dp(8), context.dp(8), context.dp(8))
+            setOnClickListener { onBack() }
+        })
+
+        cabecera.addView(fila)
+        raiz.addView(cabecera)
+
+        val contenido = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(context.dp(16), context.dp(16), context.dp(16), context.dp(20))
+        }
+
         val cliente = EditText(context).apply {
             hint = "Nombre del cliente (obligatorio para fiar)"
             setSingleLine(true)
+            setPadding(context.dp(12), context.dp(10), context.dp(12), context.dp(10))
+            background = context.fondoRedondeado(Color.WHITE)
         }
-        raiz.addView(cliente)
+
+        contenido.addView(cliente)
 
         val lista = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
         val scroll = ScrollView(context).apply { addView(lista) }
+        contenido.addView(scroll, LinearLayout.LayoutParams(-1, 0, 1f))
 
         val totalTexto = TextView(context).apply {
             textSize = 23f
@@ -47,6 +104,7 @@ class SalesScreen(
             setPadding(context.dp(16), context.dp(14), context.dp(16), context.dp(14))
             background = context.fondoRedondeado(Color.rgb(225, 240, 255))
         }
+        contenido.addView(totalTexto)
 
         fun renderizarCarrito() {
             lista.removeAllViews()
@@ -59,66 +117,76 @@ class SalesScreen(
                 })
             }
 
-            carrito.toList().forEach { linea ->
+            carrito.forEach { linea ->
                 val producto = db.obtenerProducto(linea.productoId)
                 if (producto == null) {
                     carrito.remove(linea)
-                } else {
-                    val subtotal = linea.cantidad * linea.precioUnitario
-                    total += subtotal
-
-                    val tarjeta = LinearLayout(context).apply {
-                        orientation = LinearLayout.VERTICAL
-                        setPadding(context.dp(14), context.dp(12), context.dp(14), context.dp(12))
-                        background = context.fondoRedondeado(Color.WHITE)
-                    }
-
-                    tarjeta.addView(TextView(context).apply {
-                        text = producto.nombre
-                        textSize = 17f
-                        typeface = Typeface.DEFAULT_BOLD
-                        setTextColor(Color.rgb(24, 65, 120))
-                    })
-
-                    tarjeta.addView(TextView(context).apply {
-                        text = "${linea.cantidad} × ${dinero(linea.precioUnitario)} ${producto.moneda}\n" +
-                            "Subtotal: ${dinero(subtotal)} ${producto.moneda}"
-                        textSize = 14f
-                        setTextColor(Color.DKGRAY)
-                        setPadding(0, context.dp(6), 0, context.dp(8))
-                    })
-
-                    tarjeta.addView(Button(context).apply {
-                        text = "Quitar del carrito"
-                        isAllCaps = false
-                        textSize = 14f
-                        typeface = Typeface.DEFAULT_BOLD
-                        setTextColor(Color.rgb(190, 45, 55))
-                        background = context.fondoRedondeado(Color.rgb(255, 238, 239))
-                        setPadding(context.dp(12), context.dp(8), context.dp(12), context.dp(8))
-                        setOnClickListener {
-                            carrito.removeAll { it.productoId == linea.productoId }
-                            renderizarCarrito()
-                        }
-                    })
-
-                    lista.addView(tarjeta)
-                    lista.addView(TextView(context).apply { height = context.dp(8) })
+                    return@forEach
                 }
+
+                val subtotal = linea.cantidad * linea.precioUnitario
+                total += subtotal
+
+                val tarjeta = LinearLayout(context).apply {
+                    orientation = LinearLayout.VERTICAL
+                    setPadding(context.dp(14), context.dp(12), context.dp(14), context.dp(12))
+                    background = context.fondoRedondeado(Color.WHITE)
+                }
+
+                tarjeta.addView(TextView(context).apply {
+                    text = producto.nombre
+                    textSize = 17f
+                    typeface = Typeface.DEFAULT_BOLD
+                    setTextColor(Color.rgb(24, 65, 120))
+                })
+
+                tarjeta.addView(TextView(context).apply {
+                    text = "${linea.cantidad} × ${dinero(linea.precioUnitario)} ${producto.moneda}\n" +
+                        "Subtotal: ${dinero(subtotal)} ${producto.moneda}"
+                    textSize = 14f
+                    setTextColor(Color.DKGRAY)
+                    setPadding(0, context.dp(6), 0, context.dp(8))
+                })
+
+                tarjeta.addView(Button(context).apply {
+                    text = "Quitar del carrito"
+                    isAllCaps = false
+                    textSize = 14f
+                    typeface = Typeface.DEFAULT_BOLD
+                    setTextColor(Color.rgb(190, 45, 55))
+                    background = context.fondoRedondeado(Color.rgb(255, 238, 239))
+                    setPadding(context.dp(12), context.dp(8), context.dp(12), context.dp(8))
+                    setOnClickListener {
+                        carrito.removeAll { it.productoId == linea.productoId }
+                        renderizarCarrito()
+                    }
+                })
+
+                lista.addView(tarjeta)
+                lista.addView(TextView(context).apply { height = context.dp(8) })
             }
 
             val moneda = carrito.firstOrNull()
                 ?.let { db.obtenerProducto(it.productoId)?.moneda } ?: "CUP"
-
             totalTexto.text = "TOTAL: ${dinero(total)} $moneda"
         }
 
-        fun confirmarVenta(esFiado: Boolean) {
+        fun registrarVenta(esFiado: Boolean) {
             if (carrito.isEmpty()) {
+                AlertDialog.Builder(context)
+                    .setTitle("Venta vacía")
+                    .setMessage("Añade al menos un producto antes de confirmar.")
+                    .setPositiveButton("Aceptar", null)
+                    .show()
                 return
             }
 
             if (esFiado && cliente.text.toString().isBlank()) {
+                AlertDialog.Builder(context)
+                    .setTitle("Cliente requerido")
+                    .setMessage("Necesitas escribir el nombre del cliente para registrar un fiado.")
+                    .setPositiveButton("Aceptar", null)
+                    .show()
                 return
             }
 
@@ -127,7 +195,8 @@ class SalesScreen(
                 .setMessage(
                     "Total: ${dinero(carrito.sumOf { it.cantidad * it.precioUnitario })} " +
                         (db.obtenerProducto(carrito.first().productoId)?.moneda ?: "CUP") + "\n\n" +
-                        if (esFiado) "Se creará una deuda independiente para ${cliente.text}." else "Se descontarán las existencias del inventario."
+                        if (esFiado) "Se creará una deuda independiente para ${cliente.text.toString().trim()}."
+                        else "Se descontarán las existencias del inventario."
                 )
                 .setNegativeButton("Cancelar", null)
                 .setPositiveButton("Confirmar") { _, _ ->
@@ -137,31 +206,133 @@ class SalesScreen(
                             cliente = cliente.text.toString().trim(),
                             esFiado = esFiado
                         )
+                        AlertDialog.Builder(context)
+                            .setTitle("Venta registrada")
+                            .setMessage("La venta se registró correctamente.")
+                            .setPositiveButton("Aceptar", null)
+                            .show()
+                        carrito.clear()
+                        renderizarCarrito()
                     } catch (e: Exception) {
-                        // manejar error aquí
+                        AlertDialog.Builder(context)
+                            .setTitle("Error")
+                            .setMessage(e.message ?: "No se pudo registrar la venta.")
+                            .setPositiveButton("Aceptar", null)
+                            .show()
                     }
-                    renderizarCarrito()
                 }
                 .show()
         }
 
-        raiz.addView(Button(context).apply {
+        val agregarProducto = Button(context).apply {
             text = "＋ Añadir producto"
+            typeface = Typeface.DEFAULT_BOLD
             setOnClickListener {
-                val todos = db.listar("*") // no usar esto si no está implementado
-            }
-        })
+                val disponibles = db.listar("").filter { it.cantidad > 0 }
+                if (disponibles.isEmpty()) {
+                    AlertDialog.Builder(context)
+                        .setTitle("Sin productos")
+                        .setMessage("No hay productos con existencias disponibles.")
+                        .setPositiveButton("Aceptar", null)
+                        .show()
+                    return@setOnClickListener
+                }
 
-        raiz.addView(scroll, LinearLayout.LayoutParams(-1, 0, 1f))
-        raiz.addView(totalTexto)
-        raiz.addView(Button(context).apply {
+                val opciones = disponibles.map {
+                    "${it.nombre} — ${dinero(it.venta)} ${it.moneda} (stock: ${it.cantidad})"
+                }.toTypedArray()
+
+                AlertDialog.Builder(context)
+                    .setTitle("Selecciona un producto")
+                    .setItems(opciones) { _, indice ->
+                        val producto = disponibles[indice]
+
+                        if (carrito.isNotEmpty()) {
+                            val monedaActual = db.obtenerProducto(carrito.first().productoId)?.moneda
+                            if (monedaActual != null && monedaActual != producto.moneda) {
+                                AlertDialog.Builder(context)
+                                    .setTitle("Moneda distinta")
+                                    .setMessage("No puedes mezclar monedas en la misma venta.")
+                                    .setPositiveButton("Aceptar", null)
+                                    .show()
+                                return@setItems
+                            }
+                        }
+
+                        val yaEnCarrito = carrito.filter { it.productoId == producto.id }.sumOf { it.cantidad }
+                        val restante = producto.cantidad - yaEnCarrito
+
+                        if (restante <= 0) {
+                            AlertDialog.Builder(context)
+                                .setTitle("Stock agotado")
+                                .setMessage("Ya añadiste todas las existencias disponibles de ${producto.nombre}.")
+                                .setPositiveButton("Aceptar", null)
+                                .show()
+                            return@setItems
+                        }
+
+                        val campo = EditText(context).apply {
+                            hint = "Cantidad (máximo $restante)"
+                            inputType = InputType.TYPE_CLASS_NUMBER
+                            setText("1")
+                            selectAll()
+                        }
+
+                        val dlg = AlertDialog.Builder(context)
+                            .setTitle(producto.nombre)
+                            .setMessage("Disponibles: $restante")
+                            .setView(campo)
+                            .setNegativeButton("Cancelar", null)
+                            .setPositiveButton("Añadir", null)
+                            .create()
+
+                        dlg.setOnShowListener {
+                            dlg.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                                val cantidad = campo.text.toString().toIntOrNull()
+                                if (cantidad == null || cantidad <= 0 || cantidad > restante) {
+                                    AlertDialog.Builder(context)
+                                        .setTitle("Cantidad inválida")
+                                        .setMessage("Introduce una cantidad entre 1 y $restante.")
+                                        .setPositiveButton("Aceptar", null)
+                                        .show()
+                                } else {
+                                    val idx = carrito.indexOfFirst { it.productoId == producto.id }
+                                    if (idx >= 0) {
+                                        val actual = carrito[idx]
+                                        carrito[idx] = actual.copy(cantidad = actual.cantidad + cantidad)
+                                    } else {
+                                        carrito.add(LineaVenta(producto.id, cantidad, producto.venta))
+                                    }
+                                    dlg.dismiss()
+                                    renderizarCarrito()
+                                }
+                            }
+                        }
+
+                        dlg.show()
+                    }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
+            }
+        }
+
+        contenido.addView(agregarProducto)
+
+        val confirmarPagada = Button(context).apply {
             text = "Confirmar venta pagada"
-            setOnClickListener { confirmarVenta(false) }
-        })
-        raiz.addView(Button(context).apply {
+            typeface = Typeface.DEFAULT_BOLD
+            setOnClickListener { registrarVenta(false) }
+        }
+
+        val confirmarFiada = Button(context).apply {
             text = "Registrar venta fiada"
-            setOnClickListener { confirmarVenta(true) }
-        })
+            typeface = Typeface.DEFAULT_BOLD
+            setOnClickListener { registrarVenta(true) }
+        }
+
+        contenido.addView(confirmarPagada)
+        contenido.addView(confirmarFiada)
+        raiz.addView(contenido)
 
         renderizarCarrito()
         return raiz
