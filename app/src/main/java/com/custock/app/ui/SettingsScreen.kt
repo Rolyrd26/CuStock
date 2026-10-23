@@ -84,12 +84,21 @@ class SettingsScreen(
         val backupManager = BackupManager(context)
 
         val btnTema = Button(context).apply {
-            text = "Activar tema oscuro"
-            setOnClickListener {
-                val actual = prefs.getBoolean(AppConstants.KEY_TEMA_OSCURO, false)
-                prefs.edit().putBoolean(AppConstants.KEY_TEMA_OSCURO, !actual).apply()
-                Toast.makeText(context, "Tema actualizado.", Toast.LENGTH_SHORT).show()
-            }
+    val oscuro = prefs.getBoolean(AppConstants.KEY_TEMA_OSCURO, false)
+    text = if (oscuro) "Activar tema claro" else "Activar tema oscuro"
+
+    setOnClickListener {
+        val nuevoTema = !prefs.getBoolean(AppConstants.KEY_TEMA_OSCURO, false)
+        prefs.edit().putBoolean(AppConstants.KEY_TEMA_OSCURO, nuevoTema).apply()
+
+        Toast.makeText(
+            context,
+            "Tema guardado. Se aplicará al volver a abrir CuStock.",
+            Toast.LENGTH_LONG
+        ).show()
+
+        onBack()
+    }
         }
 
         val btnCopia = Button(context).apply {
