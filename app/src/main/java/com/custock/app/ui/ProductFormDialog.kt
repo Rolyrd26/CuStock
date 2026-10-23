@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import com.custock.app.Producto
 import com.custock.app.database.ProductDatabase
 import com.custock.app.dp
@@ -89,19 +90,23 @@ class ProductFormDialog(
                 val c = coste.text.toString().replace(',', '.').toDoubleOrNull()
                 val v = venta.text.toString().replace(',', '.').toDoubleOrNull()
 
-                if (
-                    n.isBlank() ||
-                    q == null ||
-                    q < 0 ||
-                    c == null ||
-                    c < 0 ||
-                    !c.isFinite() ||
-                    v == null ||
-                    v < 0 ||
-                    !v.isFinite()
-                ) {
-                    // aquí puedes mostrar Toast si quieres
-                    return@setOnClickListener
+                when {
+                    n.isBlank() -> {
+                        Toast.makeText(context, "El nombre del producto es obligatorio.", Toast.LENGTH_LONG).show()
+                        return@setOnClickListener
+                    }
+                    q == null || q < 0 -> {
+                        Toast.makeText(context, "Las existencias deben ser un número válido y no negativo.", Toast.LENGTH_LONG).show()
+                        return@setOnClickListener
+                    }
+                    c == null || c < 0 || !c.isFinite() -> {
+                        Toast.makeText(context, "El coste debe ser un número válido y no negativo.", Toast.LENGTH_LONG).show()
+                        return@setOnClickListener
+                    }
+                    v == null || v < 0 || !v.isFinite() -> {
+                        Toast.makeText(context, "La venta debe ser un número válido y no negativo.", Toast.LENGTH_LONG).show()
+                        return@setOnClickListener
+                    }
                 }
 
                 val db = ProductDatabase(context)
@@ -117,10 +122,17 @@ class ProductFormDialog(
                     moneda = monedas[selectorMoneda.selectedItemPosition].first
                 )
 
-                val id = db.guardar(producto)
-                if (id > 0) {
-                    dialog.dismiss()
-                    onSave(producto, true)
+                try {
+                    val id = db.guardar(producto)
+                    if (id > 0) {
+                        dialog.dismiss()
+                        onSave(producto, true)
+                        Toast.makeText(context, "Producto guardado correctamente.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "No se pudo guardar el producto.", Toast.LENGTH_LONG).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Error: ${e.message ?: "No se pudo guardar."}", Toast.LENGTH_LONG).show()
                 }
             }
         }
