@@ -27,8 +27,13 @@ class HomeScreen(
     private val onAddCategory: (String) -> Unit
 ) {
 
-    private val azul = Color.rgb(24, 65, 120)
-    private val fondo = Color.rgb(245, 248, 253)
+    private val oscuro = context.getSharedPreferences(
+    AppConstants.PREFS_NAME,
+    Context.MODE_PRIVATE
+).getBoolean(AppConstants.KEY_TEMA_OSCURO, false)
+
+private val azul = if (oscuro) Color.rgb(187, 210, 255) else Color.rgb(24, 65, 120)
+private val fondo = if (oscuro) Color.rgb(18, 18, 18) else Color.rgb(245, 248, 253)
 
     private fun icono(nombre: String): String {
         return when (nombre.trim().lowercase()) {
