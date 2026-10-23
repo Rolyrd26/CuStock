@@ -16,6 +16,10 @@ import com.custock.app.database.ProductDatabase
 import com.custock.app.dinero
 import com.custock.app.dp
 import com.custock.app.fondoRedondeado
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
 
 class DebtsScreen(
     private val context: Context,
