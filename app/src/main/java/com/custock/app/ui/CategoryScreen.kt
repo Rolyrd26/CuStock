@@ -15,6 +15,7 @@ import com.custock.app.database.ProductDatabase
 import com.custock.app.dinero
 import com.custock.app.dp
 import com.custock.app.fondoRedondeado
+import com.custock.app.applyCuStockStyle
 
 class CategoryScreen(
     private val context: Context,
@@ -159,6 +160,7 @@ class CategoryScreen(
 
                 tarjeta.addView(Button(context).apply {
                     text = "Editar producto"
+                    applyCuStockStyle(primary = false)
                     setOnClickListener {
                         ProductFormDialog(
                             context = context,
@@ -173,6 +175,13 @@ class CategoryScreen(
 
                 tarjeta.addView(Button(context).apply {
                     text = "Eliminar producto"
+                    background = android.graphics.drawable.GradientDrawable().apply {
+    cornerRadius = context.dp(14).toFloat()
+    setColor(Color.rgb(255, 235, 238))
+}
+setTextColor(Color.rgb(183, 28, 28))
+textSize = 15f
+isAllCaps = false
                     setOnClickListener {
                         AlertDialog.Builder(context)
                             .setTitle("Eliminar producto")
@@ -202,6 +211,7 @@ class CategoryScreen(
         
         val btnAgregarProducto = Button(context).apply {
             text = "＋ Añadir producto"
+            applyCuStockStyle(primary = true)
             setOnClickListener {
                 ProductFormDialog(
                     context = context,
