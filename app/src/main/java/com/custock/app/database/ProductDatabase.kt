@@ -532,6 +532,66 @@ class ProductDatabase(context: Context) :
         }
     }
 
+    fun productosDelFiado(ventaId: Long): List<LineaDocumento> {
+        val resultado = mutableListOf<LineaDocumento>()
+        val cursor = readableDatabase.rawQuery(
+            """
+            SELECT nombre_producto, cantidad, precio_unitario, subtotal, moneda
+            FROM detalle_ventas
+            WHERE venta_id = ?
+            ORDER BY id ASC
+            """.trimIndent(),
+            arrayOf(ventaId.toString())
+        )
+
+        cursor.use {
+            while (it.moveToNext()) {
+                resultado.add(
+                    LineaDocumento(
+                        nombre = it.getString(0),
+                        cantidad = it.getInt(1),
+                        precioUnitario = it.getDouble(2),
+                        subtotal = it.getDouble(3),
+                        moneda = it.getString(4)
+                    )
+                )
+            }
+        }
+
+        return resultado
+    }
+
+    fun pagosDeFiado(fiadoId: Long): List<PagoFiadoDocumento> {
+        val resultado = mutableListOf<PagoFiadoDocumento>()
+        val cursor = readableDatabase.rawQuery(
+            """
+            SELECT p.id, p.fiado_id, f.cliente, p.importe, p.fecha, p.moneda
+            FROM pagos_fiados p
+            INNER JOIN fiados f ON f.id = p.fiado_id
+            WHERE p.fiado_id = ?
+            ORDER BY p.fecha ASC, p.id ASC
+            """.trimIndent(),
+            arrayOf(fiadoId.toString())
+        )
+
+        cursor.use {
+            while (it.moveToNext()) {
+                resultado.add(
+                    PagoFiadoDocumento(
+                        id = it.getLong(0),
+                        fiadoId = it.getLong(1),
+                        cliente = it.getString(2),
+                        importe = it.getDouble(3),
+                        fecha = it.getLong(4),
+                        moneda = it.getString(5)
+                    )
+                )
+            }
+        }
+
+        return resultado
+    }
+
     fun ventasDelPeriodo(desde: Long, hasta: Long): List<VentaDocumento> {
         val ventas = mutableListOf<VentaDocumento>()
         val cursor = readableDatabase.rawQuery(
