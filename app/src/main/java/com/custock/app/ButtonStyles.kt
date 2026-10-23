@@ -7,9 +7,21 @@ import android.graphics.drawable.GradientDrawable
 import android.widget.Button
 
 fun Button.applyCuStockStyle(primary: Boolean = true) {
-    val azul = Color.rgb(35, 103, 177)
-    val fondo = if (primary) azul else Color.rgb(235, 242, 250)
-    val texto = if (primary) Color.WHITE else Color.rgb(35, 76, 125)
+    
+val oscuro = context.getSharedPreferences(
+    AppConstants.PREFS_NAME,
+    android.content.Context.MODE_PRIVATE
+).getBoolean(AppConstants.KEY_TEMA_OSCURO, false)
+
+val azul = if (oscuro) Color.rgb(100, 150, 220) else Color.rgb(35, 103, 177)
+val fondo = when {
+    primary && oscuro -> Color.rgb(35, 76, 125)
+    primary -> azul
+    oscuro -> Color.rgb(45, 45, 45)
+    else -> Color.rgb(235, 242, 250)
+}
+val texto = if (primary) Color.WHITE else if (oscuro) Color.WHITE else Color.rgb(35, 76, 125)
+
 
     background = GradientDrawable().apply {
         shape = GradientDrawable.RECTANGLE
